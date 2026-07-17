@@ -35,7 +35,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { logoutAction } from "@/modules/identity/presentation/actions";
 
 const adminLinks = [
@@ -83,6 +83,16 @@ export function AppShell({ children, user, variant }: {
     .toUpperCase();
   const activePath = pendingNavigation?.from === pathname ? pendingNavigation.to : pathname;
   const isActive = (href: string) => activePath === href || (href !== home && activePath.startsWith(`${href}/`));
+  const mobileLinkIndex = mobileLinks.findIndex((item) => isActive(item.href));
+  const mobileActiveIndex = mobileLinkIndex >= 0
+    ? mobileLinkIndex
+    : moreLinks.some((item) => isActive(item.href))
+      ? mobileLinks.length
+      : 0;
+  const mobileNavStyle = {
+    "--mobile-nav-count": mobileLinks.length + (variant === "admin" ? 1 : 0),
+    "--mobile-nav-index": mobileActiveIndex,
+  } as CSSProperties;
 
   useEffect(() => {
     if (!pendingNavigation) return;
@@ -174,7 +184,8 @@ export function AppShell({ children, user, variant }: {
       </MantineAppShell.Main>
 
       <Box component="nav" className="mobile-bottom-nav" hiddenFrom="sm" aria-label="Primary navigation">
-        <div className="mobile-bottom-nav-grid">
+        <div className="mobile-bottom-nav-grid" style={mobileNavStyle}>
+          <span className="mobile-bottom-nav-indicator" aria-hidden="true" />
           {mobileLinks.map(({ href, label, icon: Icon }) => (
             <UnstyledButton
               component={Link}
