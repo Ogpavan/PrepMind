@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { Alert, Badge, Button, Group, Paper, Progress, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowLeft, IconArrowRight, IconBooks, IconCheck, IconClock, IconFlag, IconGauge, IconHierarchy2, IconPlayerSkipForward, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { QuestionRenderer } from "@/shared/ui/question-renderer";
+import { calculateCorrectness } from "@/modules/questions/domain/correctness";
 import { triggerHaptic } from "@/shared/utils/haptics";
 import { formatDuration } from "@/shared/utils/text";
 import type { AnswerFeedback, LearnerSession } from "../types/session-types";
-import { completeSessionAction, submitAnswerAction } from "./actions";
+import { completeSessionAction } from "./actions";
 
 export function SessionRunner({ initialSession }: { initialSession: LearnerSession }) {
   const router = useRouter();
@@ -19,19 +20,42 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
   const [feedback, setFeedback] = useState<Record<string, AnswerFeedback>>(
     Object.fromEntries(initialSession.questions.filter((item) => item.feedback).map((item) => [item.id, item.feedback!])),
   );
+  const feedbackRef = useRef(feedback);
   const [selections, setSelections] = useState<Record<string, string[]>>(
     Object.fromEntries(initialSession.questions.map((item) => [item.id, item.feedback?.selectedOptionIds ?? []])),
   );
   const [advancing, setAdvancing] = useState(false);
   const startedQuestionAt = useRef(0);
   const completing = useRef(false);
-  const submitting = useRef(false);
   const advanceTimer = useRef<number | null>(null);
   const currentBase = initialSession.questions[index];
   const current = { ...currentBase, feedback: feedback[currentBase.id] ?? null };
   const answered = Object.keys(feedback).length;
   const allAnswered = answered === initialSession.questions.length;
   const [remaining, setRemaining] = useState<number | null>(initialSession.remainingSeconds);
+
+  const finishSession = useCallback((timedOut = false) => {
+    if (completing.current) return;
+    completing.current = true;
+    const answers = Object.entries(feedbackRef.current).map(([sessionQuestionId, answer]) => ({
+      sessionQuestionId,
+      selectedOptionIds: answer.selectedOptionIds,
+      responseTimeSeconds: answer.responseTimeSeconds,
+      skip: answer.isSkipped,
+    }));
+    startTransition(async () => {
+      const result = await completeSessionAction({ sessionId: initialSession.id, answers, timedOut });
+      if (result.ok) {
+        triggerHaptic("success");
+        const summaryUrl = `/study/session/${initialSession.id}/summary`;
+        if (timedOut) router.replace(summaryUrl);
+        else router.push(summaryUrl);
+      } else {
+        completing.current = false;
+        notifications.show({ color: "red", message: result.message });
+      }
+    });
+  }, [initialSession.id, router]);
 
   useEffect(() => {
     startedQuestionAt.current = Date.now();
@@ -44,20 +68,12 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
   useEffect(() => {
     if (remaining === null) return;
     if (remaining <= 0 && !completing.current) {
-      completing.current = true;
-      startTransition(async () => {
-        const result = await completeSessionAction(initialSession.id, true);
-        if (result.ok) router.replace(`/study/session/${initialSession.id}/summary`);
-        else {
-          completing.current = false;
-          notifications.show({ color: "red", message: result.message });
-        }
-      });
+      finishSession(true);
       return;
     }
     const timer = window.setInterval(() => setRemaining((value) => value === null ? null : Math.max(0, value - 1)), 1000);
     return () => window.clearInterval(timer);
-  }, [remaining, initialSession.id, router]);
+  }, [remaining, finishSession]);
 
   const scheduleNextQuestion = (updatedFeedback: Record<string, AnswerFeedback>) => {
     const nextAfterCurrent = initialSession.questions.findIndex((question, questionIndex) => questionIndex > index && !updatedFeedback[question.id]);
@@ -69,30 +85,25 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
     advanceTimer.current = window.setTimeout(() => {
       setAdvancing(false);
       setIndex(nextIndex);
-    }, 1100);
+    }, 450);
   };
 
   const submit = (skip = false, selectedOptionIds?: string[]) => {
-    if (submitting.current || current.feedback) return;
-    submitting.current = true;
-    startTransition(async () => {
-      const result = await submitAnswerAction({
-        sessionId: initialSession.id,
-        sessionQuestionId: current.id,
-        selectedOptionIds: skip ? [] : selectedOptionIds ?? selections[current.id] ?? [],
-        responseTimeSeconds: Math.min(3600, Math.max(0, Math.round((Date.now() - startedQuestionAt.current) / 1000))),
-        skip,
-      });
-      submitting.current = false;
-      if (result.ok) {
-        triggerHaptic(result.data.isSkipped ? "light" : result.data.isCorrect ? "success" : "warning");
-        const updatedFeedback = { ...feedback, [current.id]: result.data };
-        setFeedback(updatedFeedback);
-        scheduleNextQuestion(updatedFeedback);
-      } else {
-        notifications.show({ color: "red", message: result.message });
-      }
-    });
+    if (current.feedback) return;
+    const selected = skip ? [] : selectedOptionIds ?? selections[current.id] ?? [];
+    const localFeedback: AnswerFeedback = {
+      selectedOptionIds: selected,
+      correctOptionIds: current.correctOptionIds,
+      isCorrect: skip ? null : calculateCorrectness(selected, current.correctOptionIds),
+      isSkipped: skip,
+      responseTimeSeconds: Math.min(3600, Math.max(0, Math.round((Date.now() - startedQuestionAt.current) / 1000))),
+      explanation: current.explanation,
+    };
+    triggerHaptic(localFeedback.isSkipped ? "light" : localFeedback.isCorrect ? "success" : "warning");
+    const updatedFeedback = { ...feedbackRef.current, [current.id]: localFeedback };
+    feedbackRef.current = updatedFeedback;
+    setFeedback(updatedFeedback);
+    scheduleNextQuestion(updatedFeedback);
   };
 
   const selectAnswer = (ids: string[]) => {
@@ -100,14 +111,7 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
     if (current.type !== "multiple_choice" && ids.length > 0) submit(false, ids);
   };
 
-  const finish = () => startTransition(async () => {
-    const result = await completeSessionAction(initialSession.id);
-    if (result.ok) {
-      triggerHaptic("success");
-      router.push(`/study/session/${initialSession.id}/summary`);
-    }
-    else notifications.show({ color: "red", message: result.message });
-  });
+  const finish = () => finishSession(false);
 
   return (
     <Stack gap="lg">
