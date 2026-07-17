@@ -43,13 +43,13 @@ type DashboardData = {
 
 function MetricTile({ label, value, icon: Icon, color }: { label: string; value: string | number; icon: typeof IconBooks; color: string }) {
   return (
-    <Paper className="tabler-card" p="md" h="100%">
+    <Paper className="tabler-card stat-card" data-accent={color} p="md" h="100%">
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Stack gap={4}>
           <Text fz={11} fw={600} c="dimmed" tt="uppercase" lts={0.4}>{label}</Text>
           <Text fz={25} fw={650} lh={1.2} lts={-0.45}>{value}</Text>
         </Stack>
-        <ThemeIcon size={38} radius={4} variant="light" color={color}>
+        <ThemeIcon className="stat-card-icon" size={38} radius={4} variant="light" color={color}>
           <Icon size={20} stroke={1.7} />
         </ThemeIcon>
       </Group>

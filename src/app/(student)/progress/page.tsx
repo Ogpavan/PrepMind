@@ -50,7 +50,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
       <UrlSelect name="subject" placeholder="All subjects" data={subjectResult.items.filter((item) => !params.exam || item.examId === params.exam).map((item) => ({ value: item.id, label: item.name }))} />
       <DateRangeFilter />
     </Group>
-    <Grid mb="lg">{cards.map((item) => <GridCol key={item.label} span={{ base: 12, sm: 6, lg: 3 }}><StatCard {...item} /></GridCol>)}</Grid>
+    <Grid mb="lg">{cards.map((item) => <GridCol key={item.label} span={{ base: 6, lg: 3 }}><StatCard {...item} /></GridCol>)}</Grid>
     <ProgressCharts subjects={progress.subjects} daily={progress.daily} />
     <Paper className="tabler-card" p="lg" mt="lg">
       <Title order={3} fz="md" mb="md">Topic performance</Title>

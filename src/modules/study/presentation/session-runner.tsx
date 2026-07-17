@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { IconArrowLeft, IconArrowRight, IconBooks, IconCheck, IconClock, IconFlag, IconGauge, IconHierarchy2, IconPlayerSkipForward, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { QuestionRenderer } from "@/shared/ui/question-renderer";
+import { triggerHaptic } from "@/shared/utils/haptics";
 import { formatDuration } from "@/shared/utils/text";
 import type { AnswerFeedback, LearnerSession } from "../types/session-types";
 import { completeSessionAction, submitAnswerAction } from "./actions";
@@ -84,6 +85,7 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
       });
       submitting.current = false;
       if (result.ok) {
+        triggerHaptic(result.data.isSkipped ? "light" : result.data.isCorrect ? "success" : "warning");
         const updatedFeedback = { ...feedback, [current.id]: result.data };
         setFeedback(updatedFeedback);
         scheduleNextQuestion(updatedFeedback);
@@ -100,7 +102,10 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
 
   const finish = () => startTransition(async () => {
     const result = await completeSessionAction(initialSession.id);
-    if (result.ok) router.push(`/study/session/${initialSession.id}/summary`);
+    if (result.ok) {
+      triggerHaptic("success");
+      router.push(`/study/session/${initialSession.id}/summary`);
+    }
     else notifications.show({ color: "red", message: result.message });
   });
 
@@ -146,15 +151,15 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
       </Paper>
 
       <Group justify="space-between" wrap="nowrap" className="session-navigation-row">
-        <Button size="compact-sm" variant="default" leftSection={<IconArrowLeft size={16} />} disabled={index === 0 || advancing} onClick={() => setIndex((value) => value - 1)}>Previous</Button>
+        <Button size="compact-sm" variant="default" data-haptic="selection" leftSection={<IconArrowLeft size={16} />} disabled={index === 0 || advancing} onClick={() => setIndex((value) => value - 1)}>Previous</Button>
         <Group gap="xs" wrap="nowrap">
-          {!current.feedback && <Button size="compact-sm" variant="light" color="gray" leftSection={<IconPlayerSkipForward size={16} />} onClick={() => submit(true)} loading={pending}>Skip</Button>}
-          {!current.feedback && current.type === "multiple_choice" && <Button size="compact-sm" onClick={() => submit(false)} loading={pending} disabled={(selections[current.id] ?? []).length === 0}>Confirm</Button>}
+          {!current.feedback && <Button size="compact-sm" variant="light" color="gray" data-haptic="light" leftSection={<IconPlayerSkipForward size={16} />} onClick={() => submit(true)} loading={pending}>Skip</Button>}
+          {!current.feedback && current.type === "multiple_choice" && <Button size="compact-sm" data-haptic="medium" onClick={() => submit(false)} loading={pending} disabled={(selections[current.id] ?? []).length === 0}>Confirm</Button>}
         </Group>
-        <Button size="compact-sm" variant="default" rightSection={<IconArrowRight size={16} />} disabled={index === initialSession.questions.length - 1 || advancing} onClick={() => setIndex((value) => value + 1)}>Next</Button>
+        <Button size="compact-sm" variant="default" data-haptic="selection" rightSection={<IconArrowRight size={16} />} disabled={index === initialSession.questions.length - 1 || advancing} onClick={() => setIndex((value) => value + 1)}>Next</Button>
       </Group>
 
-      {allAnswered && <Button color="green" leftSection={<IconFlag size={16} />} onClick={finish} loading={pending} w={{ base: "100%", sm: "fit-content" }} ml={{ sm: "auto" }}>Finish session</Button>}
+      {allAnswered && <Button color="green" data-haptic="medium" leftSection={<IconFlag size={16} />} onClick={finish} loading={pending} w={{ base: "100%", sm: "fit-content" }} ml={{ sm: "auto" }}>Finish session</Button>}
 
       <Text fz="sm" c="dimmed" ta="center">{answered} of {initialSession.questions.length} answered or skipped</Text>
     </Stack>

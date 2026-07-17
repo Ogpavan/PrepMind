@@ -9,14 +9,14 @@ export function StatCard({ label, value, icon: Icon, color = "blue", hint }: {
   hint?: string;
 }) {
   return (
-    <Paper className="tabler-card" p="md" h="100%">
+    <Paper className="tabler-card stat-card" data-accent={color} p="md" h="100%">
       <Group justify="space-between" align="center" wrap="nowrap">
-        <Stack gap={2}>
+        <Stack gap={2} style={{ minWidth: 0 }}>
           <Text c="dimmed" fz={11} fw={600} tt="uppercase" lts={0.4}>{label}</Text>
-          <Text fz={24} lh={1.25} fw={700} lts={-0.4}>{value}</Text>
+          <Text className="stat-card-value" fz={24} lh={1.25} fw={700} lts={-0.4}>{value}</Text>
           {hint && <Text c="dimmed" fz="xs">{hint}</Text>}
         </Stack>
-        <ThemeIcon size={40} radius={4} variant="light" color={color}>
+        <ThemeIcon className="stat-card-icon" size={40} radius={4} variant="light" color={color}>
           <Icon size={21} stroke={1.7} aria-hidden />
         </ThemeIcon>
       </Group>

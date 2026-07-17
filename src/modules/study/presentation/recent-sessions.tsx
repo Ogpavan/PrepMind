@@ -27,7 +27,7 @@ export function RecentSessions({ sessions }: { sessions: RecentSession[] }) {
           {sessions.map((session) => {
             const progress = session.totalQuestions ? session.attempted / session.totalQuestions * 100 : 0;
             return (
-              <Box key={session.id} className="mobile-session-row" py="sm">
+              <Box key={session.id} className="mobile-session-row session-status-row" data-status={session.status} py="sm">
                 <Group justify="space-between" align="flex-start" wrap="nowrap">
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <Text fw={600} lineClamp={1}>{session.examName}</Text>
@@ -39,7 +39,7 @@ export function RecentSessions({ sessions }: { sessions: RecentSession[] }) {
                   <Badge variant="light" color={statusColor(session.status)}>{session.status.replace("_", " ")}</Badge>
                 </Group>
                 <Group gap="sm" mt="sm" wrap="nowrap">
-                  <Progress value={progress} size={6} style={{ flex: 1 }} />
+                  <Progress value={progress} color={statusColor(session.status)} size={6} style={{ flex: 1 }} />
                   <Text fz="xs" fw={600}>{session.attempted}/{session.totalQuestions}</Text>
                   <LinkButton
                     size="compact-xs"
@@ -59,7 +59,7 @@ export function RecentSessions({ sessions }: { sessions: RecentSession[] }) {
         <Box visibleFrom="sm" className="data-table-wrap">
           <Table verticalSpacing="sm">
             <Table.Thead><Table.Tr><Table.Th>Exam</Table.Th><Table.Th>Progress</Table.Th><Table.Th>Status</Table.Th><Table.Th>Date</Table.Th><Table.Th /></Table.Tr></Table.Thead>
-            <Table.Tbody>{sessions.map((session) => <Table.Tr key={session.id}>
+            <Table.Tbody>{sessions.map((session) => <Table.Tr key={session.id} className="session-status-row" data-status={session.status}>
               <Table.Td>{session.examName}</Table.Td>
               <Table.Td>{session.attempted}/{session.totalQuestions}</Table.Td>
               <Table.Td><Badge variant="light" color={statusColor(session.status)}>{session.status.replace("_", " ")}</Badge></Table.Td>

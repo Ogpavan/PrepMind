@@ -82,7 +82,7 @@ export function AppShell({ children, user, variant }: {
   const isActive = (href: string) => pathname === href || (href !== home && pathname.startsWith(`${href}/`));
 
   return (
-    <MantineAppShell header={{ height: { base: 58, sm: 106 } }} padding={0}>
+    <MantineAppShell header={{ height: { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
       <MantineAppShell.Header className="app-header">
         <Box className="app-header-primary">
           <Container size={1320} px={{ base: "md", sm: "lg" }} h="100%">
@@ -102,6 +102,7 @@ export function AppShell({ children, user, variant }: {
                 <Button
                   component={Link}
                   href={quickAction.href}
+                  data-haptic="medium"
                   leftSection={<IconPlus size={16} />}
                   visibleFrom="md"
                 >
@@ -109,7 +110,7 @@ export function AppShell({ children, user, variant }: {
                 </Button>
                 <Menu position="bottom-end" shadow="md" width={240} offset={10}>
                   <Menu.Target>
-                    <UnstyledButton className="account-button" aria-label="Open account menu">
+                    <UnstyledButton className="account-button" data-haptic="selection" aria-label="Open account menu">
                       <Group gap="sm" wrap="nowrap">
                         <Avatar size={34} color="blue" radius="xl">{initials}</Avatar>
                         <Box visibleFrom="sm">
@@ -126,7 +127,7 @@ export function AppShell({ children, user, variant }: {
                     <Divider />
                     <Menu.Item component={Link} href={variant === "admin" ? "/admin/settings" : "/settings"} leftSection={<IconUserCog size={16} />}>Account settings</Menu.Item>
                     <form action={logoutAction}>
-                      <Menu.Item component="button" type="submit" leftSection={<IconLogout size={16} />} color="red" w="100%">Sign out</Menu.Item>
+                      <Menu.Item component="button" type="submit" data-haptic="warning" leftSection={<IconLogout size={16} />} color="red" w="100%">Sign out</Menu.Item>
                     </form>
                   </Menu.Dropdown>
                 </Menu>
@@ -144,6 +145,8 @@ export function AppShell({ children, user, variant }: {
                   href={href}
                   key={href}
                   className={`top-nav-link${isActive(href) ? " top-nav-link-active" : ""}`}
+                  data-haptic="selection"
+                  aria-current={isActive(href) ? "page" : undefined}
                 >
                   <Icon size={17} stroke={1.7} />
                   <span>{label}</span>
@@ -157,7 +160,7 @@ export function AppShell({ children, user, variant }: {
 
       <MantineAppShell.Main className="app-main">
         <Container size={1320} px={{ base: "md", sm: "lg" }} py={{ base: "lg", sm: 28 }}>
-          {children}
+          <Box key={pathname} className="app-route-content">{children}</Box>
         </Container>
       </MantineAppShell.Main>
 
@@ -169,18 +172,21 @@ export function AppShell({ children, user, variant }: {
               href={href}
               key={href}
               className={`mobile-bottom-nav-item${isActive(href) ? " mobile-bottom-nav-item-active" : ""}`}
+              data-haptic="selection"
+              aria-current={isActive(href) ? "page" : undefined}
             >
-              <Icon size={21} stroke={1.75} />
+              <span className="mobile-nav-icon"><Icon size={21} stroke={1.75} /></span>
               <span>{label}</span>
             </UnstyledButton>
           ))}
           {variant === "admin" && (
             <UnstyledButton
               onClick={more.open}
+              data-haptic="selection"
               className={`mobile-bottom-nav-item${moreLinks.some((item) => isActive(item.href)) ? " mobile-bottom-nav-item-active" : ""}`}
               aria-label="More navigation"
             >
-              <IconDots size={22} stroke={1.75} />
+              <span className="mobile-nav-icon"><IconDots size={22} stroke={1.75} /></span>
               <span>More</span>
             </UnstyledButton>
           )}
@@ -196,12 +202,13 @@ export function AppShell({ children, user, variant }: {
               key={href}
               onClick={more.close}
               className={`mobile-sheet-link${isActive(href) ? " mobile-sheet-link-active" : ""}`}
+              aria-current={isActive(href) ? "page" : undefined}
             >
               <ThemeIcon size={36} radius={4} variant="light"><Icon size={19} stroke={1.7} /></ThemeIcon>
               <span>{label}</span>
             </UnstyledButton>
           ))}
-          <Button component={Link} href={quickAction.href} onClick={more.close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
+          <Button component={Link} href={quickAction.href} data-haptic="medium" onClick={more.close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
             {quickAction.label}
           </Button>
         </Stack>

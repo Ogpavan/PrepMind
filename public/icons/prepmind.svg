@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">PrepMind</title>
+  <desc id="description">A white brain and study check mark on a blue background.</desc>
+  <rect width="512" height="512" rx="104" fill="#206bc4"/>
+  <circle cx="256" cy="256" r="164" fill="#ffffff" fill-opacity="0.1"/>
+  <g fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M246 153c-32-28-83-5-79 38-35 8-48 52-21 77-24 34 3 79 44 73 9 37 55 52 83 26V183c0-31-11-49-27-30Z"/>
+    <path d="M273 183c1-31 12-49 28-30 32-28 83-5 79 38 35 8 48 52 21 77-7 10-16 17-27 20"/>
+    <path d="M180 210c25 0 43 18 43 43M166 302c22-6 45 5 54 26M332 211c-25 0-43 18-43 43"/>
+    <path d="m308 324 32 32 67-76"/>
+  </g>
+</svg>
