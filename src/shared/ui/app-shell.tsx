@@ -4,12 +4,13 @@ import {
   AppShell as MantineAppShell,
   Avatar,
   Box,
-  Burger,
   Button,
   Container,
   Divider,
+  Drawer,
   Group,
   Menu,
+  Stack,
   Text,
   ThemeIcon,
   UnstyledButton,
@@ -23,6 +24,7 @@ import {
   IconChartHistogram,
   IconChevronDown,
   IconClipboardText,
+  IconDots,
   IconHierarchy3,
   IconLayoutDashboard,
   IconLogout,
@@ -58,9 +60,15 @@ export function AppShell({ children, user, variant }: {
   user: { name?: string | null; email?: string | null; role: string };
   variant: "admin" | "student";
 }) {
-  const [opened, { toggle, close }] = useDisclosure();
+  const [moreOpened, more] = useDisclosure();
   const pathname = usePathname();
   const links = variant === "admin" ? adminLinks : studentLinks;
+  const mobileLinks = variant === "admin"
+    ? adminLinks.filter((item) => ["/admin/dashboard", "/admin/questions", "/admin/exams", "/admin/users"].includes(item.href))
+    : studentLinks;
+  const moreLinks = variant === "admin"
+    ? adminLinks.filter((item) => ["/admin/subjects", "/admin/topics", "/admin/settings"].includes(item.href))
+    : [];
   const home = variant === "admin" ? "/admin/dashboard" : "/dashboard";
   const quickAction = variant === "admin"
     ? { href: "/admin/questions/new", label: "New question" }
@@ -80,7 +88,6 @@ export function AppShell({ children, user, variant }: {
           <Container size={1320} px={{ base: "md", sm: "lg" }} h="100%">
             <Group h="100%" justify="space-between" wrap="nowrap">
               <Group gap="sm" wrap="nowrap">
-                <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" aria-label="Toggle navigation" />
                 <UnstyledButton component={Link} href={home} className="brand-link" aria-label="PrepMind home">
                   <Group gap="sm" wrap="nowrap">
                     <ThemeIcon size={34} radius={4} color="blue">
@@ -146,27 +153,6 @@ export function AppShell({ children, user, variant }: {
           </Container>
         </Box>
 
-        {opened && (
-          <Box className="mobile-nav" hiddenFrom="sm">
-            <Container px="md" py="sm">
-              {links.map(({ href, label, icon: Icon }) => (
-                <UnstyledButton
-                  component={Link}
-                  href={href}
-                  key={href}
-                  onClick={close}
-                  className={`mobile-nav-link${isActive(href) ? " mobile-nav-link-active" : ""}`}
-                >
-                  <Icon size={18} stroke={1.7} />
-                  <span>{label}</span>
-                </UnstyledButton>
-              ))}
-              <Button component={Link} href={quickAction.href} onClick={close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
-                {quickAction.label}
-              </Button>
-            </Container>
-          </Box>
-        )}
       </MantineAppShell.Header>
 
       <MantineAppShell.Main className="app-main">
@@ -174,6 +160,52 @@ export function AppShell({ children, user, variant }: {
           {children}
         </Container>
       </MantineAppShell.Main>
+
+      <Box component="nav" className="mobile-bottom-nav" hiddenFrom="sm" aria-label="Primary navigation">
+        <div className="mobile-bottom-nav-grid">
+          {mobileLinks.map(({ href, label, icon: Icon }) => (
+            <UnstyledButton
+              component={Link}
+              href={href}
+              key={href}
+              className={`mobile-bottom-nav-item${isActive(href) ? " mobile-bottom-nav-item-active" : ""}`}
+            >
+              <Icon size={21} stroke={1.75} />
+              <span>{label}</span>
+            </UnstyledButton>
+          ))}
+          {variant === "admin" && (
+            <UnstyledButton
+              onClick={more.open}
+              className={`mobile-bottom-nav-item${moreLinks.some((item) => isActive(item.href)) ? " mobile-bottom-nav-item-active" : ""}`}
+              aria-label="More navigation"
+            >
+              <IconDots size={22} stroke={1.75} />
+              <span>More</span>
+            </UnstyledButton>
+          )}
+        </div>
+      </Box>
+
+      <Drawer opened={moreOpened} onClose={more.close} position="bottom" size={360} zIndex={400} title="More" hiddenFrom="sm" classNames={{ content: "mobile-more-sheet", header: "mobile-more-sheet-header" }}>
+        <Stack gap={4} pb="md">
+          {moreLinks.map(({ href, label, icon: Icon }) => (
+            <UnstyledButton
+              component={Link}
+              href={href}
+              key={href}
+              onClick={more.close}
+              className={`mobile-sheet-link${isActive(href) ? " mobile-sheet-link-active" : ""}`}
+            >
+              <ThemeIcon size={36} radius={4} variant="light"><Icon size={19} stroke={1.7} /></ThemeIcon>
+              <span>{label}</span>
+            </UnstyledButton>
+          ))}
+          <Button component={Link} href={quickAction.href} onClick={more.close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
+            {quickAction.label}
+          </Button>
+        </Stack>
+      </Drawer>
     </MantineAppShell>
   );
 }

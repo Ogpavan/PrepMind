@@ -101,34 +101,71 @@ a { color: inherit; text-decoration: none; }
 
 .top-nav-link-active::after { background: var(--pm-primary); }
 
-.mobile-nav {
-  position: absolute;
-  top: 58px;
+.mobile-bottom-nav {
+  position: fixed;
   right: 0;
+  bottom: 0;
   left: 0;
-  z-index: 120;
-  max-height: calc(100vh - 58px);
-  overflow-y: auto;
-  background: var(--pm-surface);
-  border-top: 1px solid var(--pm-border-soft);
-  border-bottom: 1px solid var(--pm-border);
-  box-shadow: 0 12px 24px rgba(24, 36, 51, 0.12);
+  z-index: 210;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid var(--pm-border);
+  box-shadow: 0 -5px 18px rgba(24, 36, 51, 0.08);
+  backdrop-filter: blur(14px);
 }
 
-.mobile-nav-link {
+.mobile-bottom-nav-grid {
+  display: grid;
+  height: 62px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.mobile-bottom-nav-item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  color: #697586;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.15;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.mobile-bottom-nav-item svg { transition: transform 120ms ease; }
+.mobile-bottom-nav-item:active { background: #f4f7fb; }
+.mobile-bottom-nav-item-active { color: var(--pm-primary); }
+.mobile-bottom-nav-item-active::before {
+  position: absolute;
+  top: 0;
+  width: 28px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--pm-primary);
+  content: "";
+}
+.mobile-bottom-nav-item-active svg { transform: translateY(-1px); }
+
+.mobile-more-sheet { border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0); }
+.mobile-more-sheet-header { border-bottom: 1px solid var(--pm-border-soft); }
+.mobile-sheet-link {
   display: flex;
   width: 100%;
-  min-height: 42px;
+  min-height: 52px;
   align-items: center;
-  gap: 11px;
-  padding: 8px 10px;
-  color: #4b5663;
-  border-radius: 4px;
-  font-weight: 500;
+  gap: 12px;
+  padding: 7px 8px;
+  color: #46505c;
+  border-radius: 6px;
+  font-weight: 600;
 }
-
-.mobile-nav-link:hover { background: #f6f8fa; }
-.mobile-nav-link-active { color: var(--pm-primary); background: var(--pm-primary-soft); }
+.mobile-sheet-link:active { background: #f4f7fb; }
+.mobile-sheet-link-active { color: var(--pm-primary); background: var(--pm-primary-soft); }
+.mobile-session-row + .mobile-session-row { border-top: 1px solid var(--pm-border-soft); }
 
 .app-main {
   min-height: calc(100vh - 106px);
@@ -149,6 +186,8 @@ a { color: inherit; text-decoration: none; }
 
 .data-table-wrap {
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
   background: var(--pm-surface);
   border: 1px solid var(--pm-border);
   border-radius: 4px;
@@ -225,11 +264,31 @@ a { color: inherit; text-decoration: none; }
 }
 
 .question-copy { white-space: pre-wrap; line-height: 1.65; }
+.session-question-panel { animation: session-question-enter 180ms ease-out; }
+.session-navigation-row { width: 100%; }
+.session-timer { font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+.session-meta-chip {
+  min-height: 28px;
+  padding-inline: 9px;
+  background: transparent;
+  border: 1px solid var(--pm-border);
+  font-size: 11px;
+}
+@keyframes session-question-enter {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 47.99em) {
   .desktop-only { display: none !important; }
-  .app-main { min-height: calc(100vh - 58px); }
+  .app-main { min-height: calc(100vh - 58px); padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
   .page-header { min-height: 54px; margin-top: -24px; margin-bottom: 20px; padding: 9px 0; }
+  .page-header-title { font-size: 20px !important; }
+  .page-header-actions { margin-left: auto; }
+  .page-header-actions .mantine-Button-root { min-height: 32px; padding-inline: 10px; }
   .page-filters > * { flex: 1 1 100%; width: 100%; }
+  .data-table-wrap { margin-inline: -16px; border-right: 0; border-left: 0; border-radius: 0; }
+  .tabler-card { scroll-margin-bottom: 82px; }
+  .mantine-Grid-col .tabler-card .mantine-ThemeIcon-root { width: 34px; min-width: 34px; height: 34px; }
 }

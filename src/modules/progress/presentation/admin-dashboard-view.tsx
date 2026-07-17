@@ -65,7 +65,7 @@ export function AdminDashboardView({ data, userName }: { data: DashboardData; us
     <PageHeader
       title="Dashboard"
       actions={<>
-        <LinkButton href="/admin/questions" variant="default" leftSection={<IconClipboardList size={16} />}>Question bank</LinkButton>
+        <LinkButton href="/admin/questions" variant="default" leftSection={<IconClipboardList size={16} />} visibleFrom="sm">Question bank</LinkButton>
         <LinkButton href="/admin/questions/new" leftSection={<IconPencilCheck size={16} />}>Create question</LinkButton>
       </>}
     />

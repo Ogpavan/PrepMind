@@ -50,4 +50,8 @@ The scaffold resolved Next.js 16.2.10, React 19.2.4, Mantine 9.4.1, Drizzle ORM 
 
 ## Horizontal Tabler navigation
 
-The authenticated application uses Tabler's horizontal layout pattern: a compact identity/account bar followed by an icon-led primary navigation bar. On small screens the same top navigation collapses into a dropdown below the header rather than becoming a sidebar. The locally bundled Inter variable font, Tabler Icons, compact four-pixel radii, `#206bc4` primary blue, and Zinc 100 (`#f4f4f5`) page background reproduce the requested visual language without importing Tabler's Bootstrap CSS.
+The authenticated application uses Tabler's horizontal layout pattern: a compact identity/account bar followed by an icon-led primary navigation bar. On small screens the desktop route bar is replaced by mobile bottom navigation rather than becoming a sidebar. The locally bundled Inter variable font, Tabler Icons, compact four-pixel radii, `#206bc4` primary blue, and Zinc 100 (`#f4f4f5`) page background reproduce the requested visual language without importing Tabler's Bootstrap CSS.
+
+## Mobile-first navigation and study flow
+
+Mobile uses a persistent safe-area-aware bottom navigation instead of the desktop route bar. Student routes expose five direct tabs; admin routes expose four primary tabs and a bottom sheet for secondary destinations. Learner statistics use two columns, and recent sessions switch from a table to touch-friendly progress rows. Single-choice and true/false selections submit immediately and advance after feedback; multiple-choice retains explicit confirmation because several options may be required.

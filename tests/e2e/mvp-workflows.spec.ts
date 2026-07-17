@@ -43,7 +43,7 @@ test("student completes a session and sees summary and progress", async ({ page 
   await expect(page).toHaveURL(/\/study\/session\/[0-9a-f-]+$/, { timeout: 30_000 });
   await expect(page.getByText(/Question 1 of 1/)).toBeVisible({ timeout: 20_000 });
   await page.locator('[role="button"]').filter({ has: page.locator('input[type="radio"]') }).first().click();
-  await page.getByRole("button", { name: "Submit answer" }).click();
+  await expect(page.getByText(/Correct answer|Not quite/)).toBeVisible({ timeout: 20_000 });
   await page.getByRole("button", { name: "Finish session" }).click();
   await expect(page.getByRole("heading", { name: "Session summary" })).toBeVisible({ timeout: 20_000 });
   await page.goto("/progress");

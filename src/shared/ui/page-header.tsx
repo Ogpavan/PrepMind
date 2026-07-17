@@ -18,7 +18,7 @@ export function PageHeader({ title, actions, breadcrumbs }: {
       )}
       <Group justify="space-between" align="center" wrap="wrap" gap="md">
         <Title order={2} fz={{ base: 22, sm: 24 }} className="page-header-title">{title}</Title>
-        {actions && <Group gap="sm">{actions}</Group>}
+        {actions && <Group gap="sm" className="page-header-actions">{actions}</Group>}
       </Group>
     </Stack>
   );
