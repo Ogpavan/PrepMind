@@ -35,6 +35,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { logoutAction } from "@/modules/identity/presentation/actions";
 
 const adminLinks = [
@@ -61,6 +62,7 @@ export function AppShell({ children, user, variant }: {
   variant: "admin" | "student";
 }) {
   const [moreOpened, more] = useDisclosure();
+  const [pendingNavigation, setPendingNavigation] = useState<{ from: string; to: string } | null>(null);
   const pathname = usePathname();
   const links = variant === "admin" ? adminLinks : studentLinks;
   const mobileLinks = variant === "admin"
@@ -79,7 +81,14 @@ export function AppShell({ children, user, variant }: {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-  const isActive = (href: string) => pathname === href || (href !== home && pathname.startsWith(`${href}/`));
+  const activePath = pendingNavigation?.from === pathname ? pendingNavigation.to : pathname;
+  const isActive = (href: string) => activePath === href || (href !== home && activePath.startsWith(`${href}/`));
+
+  useEffect(() => {
+    if (!pendingNavigation) return;
+    const timer = window.setTimeout(() => setPendingNavigation(null), 8000);
+    return () => window.clearTimeout(timer);
+  }, [pendingNavigation]);
 
   return (
     <MantineAppShell header={{ height: { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
@@ -160,7 +169,7 @@ export function AppShell({ children, user, variant }: {
 
       <MantineAppShell.Main className="app-main">
         <Container size={1320} px={{ base: "md", sm: "lg" }} py={{ base: "lg", sm: 28 }}>
-          <Box key={pathname} className="app-route-content">{children}</Box>
+          {children}
         </Container>
       </MantineAppShell.Main>
 
@@ -170,7 +179,9 @@ export function AppShell({ children, user, variant }: {
             <UnstyledButton
               component={Link}
               href={href}
+              prefetch
               key={href}
+              onClick={() => { if (pathname !== href) setPendingNavigation({ from: pathname, to: href }); }}
               className={`mobile-bottom-nav-item${isActive(href) ? " mobile-bottom-nav-item-active" : ""}`}
               data-haptic="selection"
               aria-current={isActive(href) ? "page" : undefined}
@@ -199,8 +210,9 @@ export function AppShell({ children, user, variant }: {
             <UnstyledButton
               component={Link}
               href={href}
+              prefetch
               key={href}
-              onClick={more.close}
+              onClick={() => { setPendingNavigation({ from: pathname, to: href }); more.close(); }}
               className={`mobile-sheet-link${isActive(href) ? " mobile-sheet-link-active" : ""}`}
               aria-current={isActive(href) ? "page" : undefined}
             >

@@ -225,8 +225,6 @@ a,
   background: var(--pm-bg);
 }
 
-.app-route-content { min-width: 0; }
-
 .connectivity-status {
   position: fixed;
   right: 16px;
@@ -367,7 +365,6 @@ a,
   content: "";
 }
 .page-header-title { color: var(--pm-text); letter-spacing: -0.35px; }
-.page-header-description { max-width: 680px; line-height: 1.45; }
 .page-breadcrumbs { color: var(--pm-muted); }
 .page-breadcrumbs a:hover { color: var(--pm-primary); }
 .page-filters {
@@ -414,11 +411,9 @@ a,
     min-height: calc(100dvh - 58px - env(safe-area-inset-top, 0px));
     padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   }
-  .app-route-content { animation: app-route-enter 170ms ease-out; }
   .connectivity-status { right: 50%; bottom: calc(74px + env(safe-area-inset-bottom, 0px)); transform: translateX(50%); white-space: nowrap; }
   .page-header { min-height: 54px; margin-top: -24px; margin-bottom: 20px; padding: 9px 0; }
   .page-header-title { font-size: 20px !important; }
-  .page-header-description { font-size: 12px !important; }
   .page-header-actions { margin-left: auto; }
   .page-header-actions .mantine-Button-root { min-height: 32px; padding-inline: 10px; }
   .page-filters > * { flex: 1 1 100%; width: 100%; }
@@ -435,11 +430,6 @@ a,
 @media (max-width: 47.99em) and (display-mode: standalone) {
   .app-header-primary { border-bottom-color: rgba(220, 225, 231, 0.75); }
   .mobile-bottom-nav { background: rgba(255, 255, 255, 0.94); }
-}
-
-@keyframes app-route-enter {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

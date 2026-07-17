@@ -1,7 +1,7 @@
 import { Breadcrumbs, Group, Stack, Text, Title } from "@mantine/core";
 import Link from "next/link";
 
-export function PageHeader({ title, description, actions, breadcrumbs }: {
+export function PageHeader({ title, actions, breadcrumbs }: {
   title: string;
   description?: string;
   actions?: React.ReactNode;
@@ -17,10 +17,7 @@ export function PageHeader({ title, description, actions, breadcrumbs }: {
         </Breadcrumbs>
       )}
       <Group justify="space-between" align="center" wrap="wrap" gap="md">
-        <Stack gap={2}>
-          <Title order={2} fz={{ base: 22, sm: 24 }} className="page-header-title">{title}</Title>
-          {description && <Text className="page-header-description" c="dimmed" fz="sm">{description}</Text>}
-        </Stack>
+        <Title order={2} fz={{ base: 22, sm: 24 }} className="page-header-title">{title}</Title>
         {actions && <Group gap="sm" className="page-header-actions">{actions}</Group>}
       </Group>
     </Stack>
