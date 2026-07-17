@@ -1,0 +1,30 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { ActionIcon, Button, Group, Menu, Modal, NumberInput, Select, Stack, Switch, Table, Text, TextInput, Textarea } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
+import { notifications } from "@mantine/notifications";
+import { IconDots, IconEdit, IconPlus, IconPower } from "@tabler/icons-react";
+import type { SubjectListItem } from "@/modules/subjects/infrastructure/subject-repository";
+import type { TopicListItem } from "../infrastructure/topic-repository";
+import { topicSchema } from "../schemas/topic-schema";
+import { saveTopicAction, toggleTopicAction } from "./actions";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { EmptyState } from "@/shared/ui/empty-state";
+import { PageHeader } from "@/shared/ui/page-header";
+
+type TopicRef = { id: string; name: string; subjectId: string; parentTopicId: string | null };
+export function TopicManager({ items, subjects, topicRefs, filters }: { items: TopicListItem[]; subjects: SubjectListItem[]; topicRefs: TopicRef[]; filters?: React.ReactNode }) {
+  const initial = { id: undefined as string | undefined, subjectId: subjects[0]?.id ?? "", parentTopicId: null as string | null, name: "", description: "", displayOrder: 0, isActive: true };
+  const [opened, modal] = useDisclosure(false); const [pending, startTransition] = useTransition(); const [confirm, setConfirm] = useState<TopicListItem | null>(null); const form = useForm({ initialValues: initial, validate: zod4Resolver(topicSchema) });
+  const openCreate = () => { form.setValues(initial); form.resetDirty(); modal.open(); }; const openEdit = (item: TopicListItem) => { form.setValues({ id: item.id, subjectId: item.subjectId, parentTopicId: item.parentTopicId, name: item.name, description: item.description, displayOrder: item.displayOrder, isActive: item.isActive }); form.resetDirty(); modal.open(); };
+  const parents = topicRefs.filter((item) => item.subjectId === form.values.subjectId && item.id !== form.values.id);
+  const submit = form.onSubmit((values) => startTransition(async () => { const result = await saveTopicAction(values); notifications.show({ color: result.ok ? "green" : "red", message: result.message }); if (result.ok) modal.close(); else if (result.fieldErrors) Object.entries(result.fieldErrors).forEach(([field, messages]) => form.setFieldError(field, messages?.[0])); }));
+  const toggle = () => confirm && startTransition(async () => { const result = await toggleTopicAction(confirm.id, !confirm.isActive); notifications.show({ color: result.ok ? "green" : "red", message: result.message }); if (result.ok) setConfirm(null); });
+  return <><PageHeader title="Topics" actions={<Button leftSection={<IconPlus size={16} />} onClick={openCreate} disabled={subjects.length === 0}>New topic</Button>} />{filters && <div className="page-filters">{filters}</div>}{items.length === 0 ? <EmptyState title="No topics found" description="Create topics and optional subtopics under a subject." /> : <div className="data-table-wrap"><Table highlightOnHover verticalSpacing="sm"><Table.Thead><Table.Tr><Table.Th>Topic</Table.Th><Table.Th>Subject</Table.Th><Table.Th>Exam</Table.Th><Table.Th>Order</Table.Th><Table.Th>Status</Table.Th><Table.Th w={48}>Actions</Table.Th></Table.Tr></Table.Thead><Table.Tbody>{items.map((item) => <Table.Tr key={item.id}><Table.Td><Text fw={600}>{item.name}</Text>{item.parentName && <Text fz="xs" c="dimmed">Subtopic of {item.parentName}</Text>}</Table.Td><Table.Td>{item.subjectName}</Table.Td><Table.Td>{item.examName}</Table.Td><Table.Td>{item.displayOrder}</Table.Td><Table.Td><StatusBadge active={item.isActive} /></Table.Td><Table.Td><Menu position="bottom-end"><Menu.Target><ActionIcon variant="subtle" aria-label={`Actions for ${item.name}`}><IconDots size={18} /></ActionIcon></Menu.Target><Menu.Dropdown><Menu.Item leftSection={<IconEdit size={16} />} onClick={() => openEdit(item)}>Edit</Menu.Item><Menu.Item leftSection={<IconPower size={16} />} color={item.isActive ? "orange" : "green"} onClick={() => setConfirm(item)}>{item.isActive ? "Deactivate" : "Activate"}</Menu.Item></Menu.Dropdown></Menu></Table.Td></Table.Tr>)}</Table.Tbody></Table></div>}
+  <Modal opened={opened} onClose={modal.close} title={form.values.id ? "Edit topic" : "Create topic"} size="lg"><form onSubmit={submit} noValidate><Stack><Select label="Subject" required searchable data={subjects.map((subject) => ({ value: subject.id, label: `${subject.examName} · ${subject.name}` }))} value={form.values.subjectId} onChange={(value) => { form.setFieldValue("subjectId", value ?? ""); form.setFieldValue("parentTopicId", null); }} error={form.errors.subjectId} /><Select label="Parent topic" description="Leave blank for a top-level topic" clearable searchable data={parents.map((topic) => ({ value: topic.id, label: topic.name }))} {...form.getInputProps("parentTopicId")} /><TextInput label="Name" required {...form.getInputProps("name")} /><Textarea label="Description" minRows={3} {...form.getInputProps("description")} /><NumberInput label="Display order" min={0} {...form.getInputProps("displayOrder")} /><Switch label="Active" {...form.getInputProps("isActive", { type: "checkbox" })} /><Group justify="flex-end"><Button variant="default" onClick={modal.close}>Cancel</Button><Button type="submit" loading={pending}>Save topic</Button></Group></Stack></form></Modal>
+  <ConfirmDialog opened={Boolean(confirm)} onClose={() => setConfirm(null)} onConfirm={toggle} title={confirm?.isActive ? "Deactivate topic?" : "Activate topic?"} message={confirm?.isActive ? "This topic will not be available for new study sessions." : "This topic will become available to learners."} confirmLabel={confirm?.isActive ? "Deactivate" : "Activate"} color={confirm?.isActive ? "orange" : "green"} loading={pending} /></>;
+}

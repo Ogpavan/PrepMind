@@ -1,0 +1,12 @@
+import { Badge, Grid, GridCol, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { IconPlayerPlay } from "@tabler/icons-react";
+import { notFound } from "next/navigation";
+import { requireUser } from "@/modules/identity/application/authorization";
+import { subjectService } from "@/modules/subjects/application/subject-service";
+import { topicService } from "@/modules/topics/application/topic-service";
+import { progressService } from "@/modules/progress/application/progress-service";
+import { PageHeader } from "@/shared/ui/page-header";
+import { formatPercent } from "@/shared/utils/text";
+import { LinkButton } from "@/shared/ui/link-button";
+
+export default async function SubjectDetailPage({ params }: { params: Promise<{ id: string }> }) { const user = await requireUser(); const { id } = await params; const [subject, topics, overview, progress] = await Promise.all([subjectService.findById(id), topicService.listBySubject(id), progressService.subjectOverview(user.id), progressService.get(user.id, { subjectId: id })]); if (!subject?.isActive) notFound(); const summary = overview.find((item) => item.id === id); return <><PageHeader title={subject.name} description={subject.description || `${summary?.available ?? 0} active questions`} breadcrumbs={[{ label: "Subjects", href: "/subjects" }, { label: subject.name }]} actions={<LinkButton href={`/study?subject=${id}`} leftSection={<IconPlayerPlay size={16} />}>Study this subject</LinkButton>} /><Grid mb="lg"><GridCol span={{ base: 12, sm: 4 }}><Paper className="tabler-card" p="lg"><Text c="dimmed" fz="sm">Available questions</Text><Text fz={28} fw={700}>{summary?.available ?? 0}</Text></Paper></GridCol><GridCol span={{ base: 12, sm: 4 }}><Paper className="tabler-card" p="lg"><Text c="dimmed" fz="sm">Attempted</Text><Text fz={28} fw={700}>{progress.metrics.attempted}</Text></Paper></GridCol><GridCol span={{ base: 12, sm: 4 }}><Paper className="tabler-card" p="lg"><Text c="dimmed" fz="sm">Accuracy</Text><Text fz={28} fw={700}>{formatPercent(progress.metrics.accuracy)}</Text></Paper></GridCol></Grid><Title order={3} fz="md" mb="md">Topics</Title><Grid>{topics.filter((topic) => !topic.parentTopicId).map((topic) => <GridCol key={topic.id} span={{ base: 12, md: 6 }}><Paper className="tabler-card" p="lg"><Stack gap="xs"><Group justify="space-between"><Text fw={600}>{topic.name}</Text><Badge variant="light">Active</Badge></Group><Text c="dimmed" fz="sm">{topic.description || "Practice questions in this topic."}</Text></Stack></Paper></GridCol>)}</Grid></>; }

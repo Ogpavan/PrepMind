@@ -1,0 +1,4 @@
+export type LearnerOption = { id: string; text: string; displayOrder: number };
+export type AnswerFeedback = { selectedOptionIds: string[]; correctOptionIds: string[]; isCorrect: boolean | null; isSkipped: boolean; responseTimeSeconds: number; explanation: string };
+export type LearnerSessionQuestion = { id: string; questionId: string; order: number; prompt: string; type: "single_choice" | "multiple_choice" | "true_false"; difficulty: "easy" | "medium" | "hard"; subjectName: string; topicName: string; options: LearnerOption[]; feedback: AnswerFeedback | null };
+export type LearnerSession = { id: string; status: "created" | "in_progress" | "completed" | "abandoned"; isTimed: boolean; durationSeconds: number | null; remainingSeconds: number | null; startedAt: string | null; completedAt: string | null; examName: string; questions: LearnerSessionQuestion[] };

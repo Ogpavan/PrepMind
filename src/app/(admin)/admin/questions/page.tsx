@@ -1,0 +1,15 @@
+import { Group } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
+import { examService } from "@/modules/exams/application/exam-service";
+import { questionService } from "@/modules/questions/application/question-service";
+import { QuestionTable } from "@/modules/questions/presentation/question-table";
+import { subjectService } from "@/modules/subjects/application/subject-service";
+import { topicService } from "@/modules/topics/application/topic-service";
+import { PageHeader } from "@/shared/ui/page-header";
+import { SearchInput } from "@/shared/ui/search-input";
+import { UrlSelect } from "@/shared/ui/url-select";
+import { ListPagination } from "@/shared/ui/list-pagination";
+import { LinkButton } from "@/shared/ui/link-button";
+
+export const metadata = { title: "Questions" };
+export default async function QuestionsPage({ searchParams }: { searchParams: Promise<{ q?: string; page?: string; exam?: string; subject?: string; topic?: string; difficulty?: "easy" | "medium" | "hard"; status?: string; sort?: string }> }) { const params = await searchParams; const [result, exams, subjectResult, topicResult] = await Promise.all([questionService.list({ query: params.q, page: Number(params.page) || 1, examId: params.exam, subjectId: params.subject, topicId: params.topic, difficulty: params.difficulty, status: params.status, sort: params.sort }), examService.listActive(), subjectService.list({ pageSize: 100 }), topicService.list({ pageSize: 100 })]); const subjects = subjectResult.items; const topics = topicResult.items.filter((item) => !item.parentTopicId); return <><PageHeader title="Question bank" description="Create, validate, classify, and publish study questions." actions={<LinkButton href="/admin/questions/new" leftSection={<IconPlus size={16} />}>New question</LinkButton>} /><Group mb="md" align="flex-end"><UrlSelect name="exam" placeholder="All exams" data={exams.map((item) => ({ value: item.id, label: item.name }))} /><UrlSelect name="subject" placeholder="All subjects" data={subjects.filter((item) => !params.exam || item.examId === params.exam).map((item) => ({ value: item.id, label: item.name }))} /><UrlSelect name="topic" placeholder="All topics" data={topics.filter((item) => !params.subject || item.subjectId === params.subject).map((item) => ({ value: item.id, label: item.name }))} /><UrlSelect name="difficulty" placeholder="Any difficulty" data={[{ value: "easy", label: "Easy" }, { value: "medium", label: "Medium" }, { value: "hard", label: "Hard" }]} width={170} /><UrlSelect name="status" placeholder="Any status" data={[{ value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }, { value: "archived", label: "Archived" }]} width={170} /><UrlSelect name="sort" placeholder="Newest first" clearable={false} data={[{ value: "newest", label: "Newest first" }, { value: "oldest", label: "Oldest first" }, { value: "difficulty", label: "Difficulty" }]} width={170} /><SearchInput placeholder="Search questions" /></Group><QuestionTable items={result.items} /><Group justify="space-between" mt="lg"><div /><ListPagination page={result.page} total={result.totalPages} /></Group></>; }

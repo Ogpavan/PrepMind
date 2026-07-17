@@ -1,0 +1,6 @@
+"use client";
+
+import { BarChart, LineChart } from "@mantine/charts";
+import { Grid, Paper, Text, Title } from "@mantine/core";
+
+export function ProgressCharts({ subjects, daily }: { subjects: Array<{ label: string; accuracy: number }>; daily: Array<{ date: string; attempted: number; correct: number }> }) { return <Grid><Grid.Col span={{ base: 12, lg: 5 }}><Paper className="tabler-card" p="lg"><Title order={3} fz="md" mb="md">Subject accuracy</Title>{subjects.length ? <BarChart h={280} data={subjects.map((item) => ({ subject: item.label, accuracy: Math.round(item.accuracy) }))} dataKey="subject" series={[{ name: "accuracy", label: "Accuracy", color: "blue.6" }]} yAxisProps={{ domain: [0, 100] }} /> : <Text c="dimmed">Complete a session to see subject performance.</Text>}</Paper></Grid.Col><Grid.Col span={{ base: 12, lg: 7 }}><Paper className="tabler-card" p="lg"><Title order={3} fz="md" mb="md">Daily activity</Title>{daily.length ? <LineChart h={280} data={daily} dataKey="date" series={[{ name: "attempted", label: "Attempted", color: "blue.6" }, { name: "correct", label: "Correct", color: "green.6" }]} curveType="linear" /> : <Text c="dimmed">Your last 30 days of activity will appear here.</Text>}</Paper></Grid.Col></Grid>; }

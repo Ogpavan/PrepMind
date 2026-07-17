@@ -1,0 +1,1 @@
+export function ensureSufficientQuestions(available: number, requested: number) { return available >= requested ? { ok: true as const } : { ok: false as const, message: `Only ${available} matching question${available === 1 ? " is" : "s are"} available. Reduce the question count or broaden the filters.` }; }
