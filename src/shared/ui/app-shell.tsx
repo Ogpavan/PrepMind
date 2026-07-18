@@ -72,11 +72,12 @@ export function AppShell({ children, user, variant }: {
   const preloadRoutes = variant === "admin" ? adminPreloadRoutes : studentPreloadRoutes;
   const mobileLinks = variant === "admin"
     ? adminLinks.filter((item) => ["/admin/dashboard", "/admin/questions", "/admin/exams", "/admin/users"].includes(item.href))
-    : studentLinks;
+    : [studentLinks[0], studentLinks[2], studentLinks[1], studentLinks[3], studentLinks[4]];
   const moreLinks = variant === "admin"
     ? adminLinks.filter((item) => ["/admin/subjects", "/admin/topics", "/admin/settings"].includes(item.href))
     : [];
   const home = variant === "admin" ? "/admin/dashboard" : "/dashboard";
+  const focusMode = variant === "student" && /^\/study\/session\/[^/]+$/.test(pathname);
   const quickAction = variant === "admin"
     ? { href: "/admin/questions/new", label: "New question" }
     : { href: "/study", label: "Start session" };
@@ -108,8 +109,8 @@ export function AppShell({ children, user, variant }: {
   return (
     <>
       <RoutePreloader routes={preloadRoutes} />
-      <MantineAppShell header={{ height: { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
-      <MantineAppShell.Header className="app-header">
+      <MantineAppShell header={{ height: focusMode ? 0 : { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
+      {!focusMode && <MantineAppShell.Header className="app-header">
         <Box className="app-header-primary">
           <Container size={1320} px={{ base: "md", sm: "lg" }} h="100%">
             <Group h="100%" justify="space-between" wrap="nowrap">
@@ -184,15 +185,15 @@ export function AppShell({ children, user, variant }: {
           </Container>
         </Box>
 
-      </MantineAppShell.Header>
+      </MantineAppShell.Header>}
 
-      <MantineAppShell.Main className="app-main">
-        <Container size={1320} px={{ base: "md", sm: "lg" }} py={{ base: "lg", sm: 28 }}>
+      <MantineAppShell.Main className={`app-main${focusMode ? " app-main-focus" : ""}`}>
+        <Container className={focusMode ? "focus-session-container" : undefined} size={focusMode ? 960 : 1320} px={{ base: "md", sm: "lg" }} py={focusMode ? { base: "sm", sm: "lg" } : { base: "lg", sm: 28 }}>
           {children}
         </Container>
       </MantineAppShell.Main>
 
-      <Box component="nav" className="mobile-bottom-nav" hiddenFrom="sm" aria-label="Primary navigation">
+      {!focusMode && <Box component="nav" className="mobile-bottom-nav" hiddenFrom="sm" aria-label="Primary navigation">
         <div className="mobile-bottom-nav-grid" style={mobileNavStyle}>
           <span className="mobile-bottom-nav-indicator" aria-hidden="true" />
           {mobileLinks.map(({ href, label, icon: Icon }) => (
@@ -202,7 +203,7 @@ export function AppShell({ children, user, variant }: {
               prefetch
               key={href}
               onClick={() => { if (pathname !== href) setPendingNavigation({ from: pathname, to: href }); }}
-              className={`mobile-bottom-nav-item${isActive(href) ? " mobile-bottom-nav-item-active" : ""}`}
+              className={`mobile-bottom-nav-item${href === "/study" ? " mobile-bottom-nav-item-study" : ""}${isActive(href) ? " mobile-bottom-nav-item-active" : ""}`}
               data-haptic="selection"
               aria-current={isActive(href) ? "page" : undefined}
             >
@@ -222,7 +223,7 @@ export function AppShell({ children, user, variant }: {
             </UnstyledButton>
           )}
         </div>
-      </Box>
+      </Box>}
 
       <Drawer opened={moreOpened} onClose={more.close} position="bottom" size={360} zIndex={400} title="More" hiddenFrom="sm" removeScrollProps={{ removeScrollBar: false }} classNames={{ content: "mobile-more-sheet", header: "mobile-more-sheet-header" }}>
         <Stack gap={4} pb="md">

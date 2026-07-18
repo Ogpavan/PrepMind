@@ -20,9 +20,9 @@ test("admin can sign in and create a valid question", async ({ page }) => {
   await page.getByRole("link", { name: "Questions" }).click();
   await page.getByRole("link", { name: "New question" }).click();
   await page.getByTestId("question-subject").click();
-  await page.getByRole("option", { name: /Quantitative Aptitude/ }).click();
+  await page.getByRole("option").first().click();
   await page.getByTestId("question-topic").click();
-  await page.getByRole("option", { name: "Arithmetic" }).click();
+  await page.getByRole("option").first().click();
   await page.getByRole("textbox", { name: /Question/ }).fill(`E2E arithmetic check ${Date.now()}?`);
   await page.getByRole("textbox", { name: /Option 1/ }).fill("Correct option");
   await page.getByRole("textbox", { name: /Option 2/ }).fill("Incorrect option");
@@ -30,17 +30,19 @@ test("admin can sign in and create a valid question", async ({ page }) => {
   await page.getByLabel("Source").fill("E2E test");
   await page.getByRole("button", { name: "Save question" }).click();
   await expect(page).toHaveURL(/\/admin\/questions\/[0-9a-f-]+$/, { timeout: 30_000 });
-  await expect(page.getByRole("heading", { name: "Edit question" })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Classification", { exact: true })).toBeVisible({ timeout: 20_000 });
 });
 
 test("student completes a session and sees summary and progress", async ({ page }) => {
   await login(page, "student@prepmind.local", "Student@12345", "/dashboard");
   await page.getByRole("link", { name: "Study", exact: true }).click();
   await page.getByTestId("study-subject").click();
-  await page.getByRole("option", { name: /Quantitative Aptitude/ }).click();
+  await page.getByRole("option").first().click();
   await page.getByLabel("Number of questions").fill("1");
-  await page.getByRole("button", { name: "Start study session" }).click();
+  await page.getByRole("button", { name: "Start session", exact: true }).click();
   await expect(page).toHaveURL(/\/study\/session\/[0-9a-f-]+$/, { timeout: 30_000 });
+  await expect(page.locator(".app-header")).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toHaveCount(0);
   await expect(page.getByText(/Question 1 of 1/)).toBeVisible({ timeout: 20_000 });
   await page.locator('[role="button"]').filter({ has: page.locator('input[type="radio"]') }).first().click();
   await expect(page.getByText(/Correct answer|Not quite/)).toBeVisible({ timeout: 20_000 });

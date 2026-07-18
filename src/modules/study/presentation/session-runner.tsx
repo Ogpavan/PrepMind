@@ -145,6 +145,7 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
           {!current.feedback && current.type !== "multiple_choice" && <Text fz="xs" c="dimmed">Select an option to submit your answer automatically.</Text>}
           {current.feedback && (
             <Alert
+              className="session-question-feedback"
               color={current.feedback.isSkipped ? "blue" : current.feedback.isCorrect ? "green" : "red"}
               icon={current.feedback.isCorrect ? <IconCheck size={19} /> : current.feedback.isSkipped ? <IconPlayerSkipForward size={19} /> : <IconX size={19} />}
               title={current.feedback.isSkipped ? "Question skipped" : current.feedback.isCorrect ? "Correct answer" : "Not quite"}

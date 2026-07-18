@@ -20,6 +20,14 @@ test("admin mobile navigation", async ({ page }) => {
 
 test("student mobile navigation", async ({ page }) => {
   await login(page, "student@prepmind.local", "Student@12345", "/dashboard");
-  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Study", exact: true })).toBeVisible();
+  const navigation = page.getByRole("navigation", { name: "Primary navigation" });
+  const study = page.getByRole("link", { name: "Study", exact: true });
+  await expect(navigation).toBeVisible();
+  await expect(study).toBeVisible();
+  await expect(study).toHaveClass(/mobile-bottom-nav-item-study/);
+
+  const links = navigation.getByRole("link");
+  await expect(links.nth(2)).toHaveText("Study");
+  await expect(study.locator(".mobile-nav-icon")).toHaveCSS("background-color", "rgb(32, 107, 196)");
+  await expect(study.locator(".mobile-nav-icon")).toHaveCSS("color", "rgb(255, 255, 255)");
 });
