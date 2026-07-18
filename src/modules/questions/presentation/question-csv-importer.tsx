@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Alert, Button, FileInput, Group, List, Modal, Paper, ScrollArea, SimpleGrid, Stack, Text, ThemeIcon } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconDownload, IconFileImport, IconFileSpreadsheet, IconUpload } from "@tabler/icons-react";
+import { Check as IconCheck, DownloadSimple as IconDownload, FileArrowDown as IconFileImport, FileCsv as IconFileSpreadsheet, UploadSimple as IconUpload, WarningCircle as IconAlertCircle } from "@phosphor-icons/react/ssr";
 import { useRouter } from "next/navigation";
 import type { QuestionImportSummary } from "../infrastructure/question-import-repository";
 import { importQuestionsFileAction } from "./actions";

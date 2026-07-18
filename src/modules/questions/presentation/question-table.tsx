@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { ActionIcon, Badge, Button, Checkbox, Group, Menu, Table, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArchive, IconCopy, IconDots, IconEdit, IconPower, IconRestore, IconTrash } from "@tabler/icons-react";
+import { Archive as IconArchive, ArrowCounterClockwise as IconRestore, Copy as IconCopy, DotsThree as IconDots, PencilSimple as IconEdit, Power as IconPower, Trash as IconTrash } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 import type { QuestionListItem } from "../infrastructure/question-repository";
 import { activateQuestionsAction, archiveQuestionsAction, deleteQuestionsAction, duplicateQuestionAction, restoreQuestionsAction } from "./actions";

@@ -1,5 +1,5 @@
 import { Group } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
+import { Plus as IconPlus } from "@phosphor-icons/react/ssr";
 import { examService } from "@/modules/exams/application/exam-service";
 import { questionService } from "@/modules/questions/application/question-service";
 import { QuestionTable } from "@/modules/questions/presentation/question-table";

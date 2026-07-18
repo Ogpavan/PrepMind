@@ -1,5 +1,5 @@
 import { Box, Center, Group, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconBrain, IconCheck } from "@tabler/icons-react";
+import { Brain as IconBrain, Check as IconCheck } from "@phosphor-icons/react/ssr";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/modules/identity/application/authorization";
 import { LoginForm } from "@/modules/identity/presentation/login-form";
@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <Center mih="calc(100vh - 32px)">
         <Stack w="100%" maw={410} gap="lg">
           <Group justify="center" gap="sm">
-            <ThemeIcon size={38} radius={4}><IconBrain size={23} stroke={1.8} /></ThemeIcon>
+            <ThemeIcon size={38} radius={4}><IconBrain size={23} /></ThemeIcon>
             <Text className="brand-wordmark" fz={22}>PrepMind</Text>
           </Group>
           <Paper className="tabler-card" p={{ base: "lg", sm: 32 }}>

@@ -16,15 +16,15 @@ import {
   Title,
 } from "@mantine/core";
 import {
-  IconBooks,
-  IconCertificate,
-  IconCircleCheck,
-  IconClipboardList,
-  IconHierarchy3,
-  IconPencilCheck,
-  IconReportAnalytics,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+  Books as IconBooks,
+  Certificate as IconCertificate,
+  ChartLineUp as IconReportAnalytics,
+  CheckCircle as IconCircleCheck,
+  ClipboardText as IconClipboardList,
+  NotePencil as IconPencilCheck,
+  TreeStructure as IconHierarchy3,
+  UsersThree as IconUsersGroup,
+} from "@phosphor-icons/react/ssr";
 import { LinkButton } from "@/shared/ui/link-button";
 import { PageHeader } from "@/shared/ui/page-header";
 
@@ -50,7 +50,7 @@ function MetricTile({ label, value, icon: Icon, color }: { label: string; value:
           <Text fz={25} fw={650} lh={1.2} lts={-0.45}>{value}</Text>
         </Stack>
         <ThemeIcon className="stat-card-icon" size={38} radius={4} variant="light" color={color}>
-          <Icon size={20} stroke={1.7} />
+          <Icon size={20} />
         </ThemeIcon>
       </Group>
     </Paper>
@@ -91,7 +91,7 @@ export function AdminDashboardView({ data, userName }: { data: DashboardData; us
               </Group>
             </Stack>
             <ThemeIcon className="dashboard-hero-mark" size={128} radius={999} variant="light" color="blue" visibleFrom="sm">
-              <IconReportAnalytics size={66} stroke={1.25} />
+              <IconReportAnalytics size={66} />
             </ThemeIcon>
           </Group>
         </Paper>

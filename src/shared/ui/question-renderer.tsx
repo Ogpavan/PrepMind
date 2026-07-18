@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox, Paper, Radio, Stack, Text } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import { Check as IconCheck, X as IconX } from "@phosphor-icons/react/ssr";
 import type { LearnerSessionQuestion } from "@/modules/study/types/session-types";
 
 export function QuestionRenderer({ question, selected, onChange, disabled }: { question: LearnerSessionQuestion; selected: string[]; onChange: (ids: string[]) => void; disabled: boolean }) {

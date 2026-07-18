@@ -5,7 +5,7 @@ import { Alert, Button, Grid, NumberInput, Paper, Select, Stack, Switch, Text, T
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { notifications } from "@mantine/notifications";
-import { IconPlayerPlay } from "@tabler/icons-react";
+import { Play as IconPlayerPlay } from "@phosphor-icons/react/ssr";
 import { useRouter } from "next/navigation";
 import type { Exam, Subject, Topic } from "@/infrastructure/database/schema";
 import type { ApplicationSettings } from "@/modules/settings/schemas/settings-schema";

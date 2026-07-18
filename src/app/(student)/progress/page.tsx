@@ -12,7 +12,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconCalendarStats, IconCircleCheck, IconCircleX, IconClipboardList, IconClockHour4, IconPencilCheck, IconTargetArrow } from "@tabler/icons-react";
+import { CalendarBlank as IconCalendarStats, CheckCircle as IconCircleCheck, ClipboardText as IconClipboardList, Clock as IconClockHour4, NotePencil as IconPencilCheck, Target as IconTargetArrow, XCircle as IconCircleX } from "@phosphor-icons/react/ssr";
 import { requireUser } from "@/modules/identity/application/authorization";
 import { examService } from "@/modules/exams/application/exam-service";
 import { subjectService } from "@/modules/subjects/application/subject-service";

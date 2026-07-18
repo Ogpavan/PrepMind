@@ -1,10 +1,10 @@
 import { Group, Paper, Stack, Text, ThemeIcon } from "@mantine/core";
-import type { TablerIcon } from "@tabler/icons-react";
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 
 export function StatCard({ label, value, icon: Icon, color = "blue", hint }: {
   label: string;
   value: string | number;
-  icon: TablerIcon;
+  icon: PhosphorIcon;
   color?: string;
   hint?: string;
 }) {
@@ -17,7 +17,7 @@ export function StatCard({ label, value, icon: Icon, color = "blue", hint }: {
           {hint && <Text c="dimmed" fz="xs">{hint}</Text>}
         </Stack>
         <ThemeIcon className="stat-card-icon" size={40} radius={4} variant="light" color={color}>
-          <Icon size={21} stroke={1.7} aria-hidden />
+          <Icon size={21} aria-hidden />
         </ThemeIcon>
       </Group>
     </Paper>

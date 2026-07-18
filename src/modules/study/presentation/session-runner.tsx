@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { Alert, Badge, Button, Group, Paper, Progress, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowLeft, IconArrowRight, IconBooks, IconCheck, IconClock, IconFlag, IconGauge, IconHierarchy2, IconPlayerSkipForward, IconX } from "@tabler/icons-react";
+import { ArrowLeft as IconArrowLeft, ArrowRight as IconArrowRight, Books as IconBooks, Check as IconCheck, Clock as IconClock, Flag as IconFlag, Gauge as IconGauge, SkipForward as IconPlayerSkipForward, TreeStructure as IconHierarchy2, X as IconX } from "@phosphor-icons/react/ssr";
 import { useRouter } from "next/navigation";
 import { QuestionRenderer } from "@/shared/ui/question-renderer";
 import { startNavigationProgress } from "@/shared/ui/navigation-progress";
@@ -123,7 +123,7 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
             <Text fz={{ base: "xs", sm: "sm" }} c="dimmed">{initialSession.examName}</Text>
             <Text fw={600}>Question {index + 1} of {initialSession.questions.length}</Text>
           </div>
-          {remaining !== null && <Group gap={7} wrap="nowrap" className="session-timer"><IconClock size={21} stroke={1.8} color={remaining < 60 ? "var(--mantine-color-red-7)" : "var(--pm-primary)"} /><Text fz={18} fw={700} c={remaining < 60 ? "red.7" : "dark.8"}>{formatDuration(remaining)}</Text></Group>}
+          {remaining !== null && <Group gap={7} wrap="nowrap" className="session-timer"><IconClock size={21} color={remaining < 60 ? "var(--mantine-color-red-7)" : "var(--pm-primary)"} /><Text fz={18} fw={700} c={remaining < 60 ? "red.7" : "dark.8"}>{formatDuration(remaining)}</Text></Group>}
         </Group>
         <Progress value={((index + 1) / initialSession.questions.length) * 100} mt={{ base: 6, sm: "md" }} size="sm" />
       </Paper>
@@ -131,9 +131,9 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
       <Paper key={current.id} className="tabler-card session-question-panel" p={{ base: "md", sm: "xl" }}>
         <Stack gap="lg" className="session-question-content">
           <Group gap="xs" wrap="nowrap" className="session-meta-row">
-            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconBooks size={14} stroke={1.8} color="var(--pm-primary)" />}>{current.subjectName}</Badge>
-            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconHierarchy2 size={14} stroke={1.8} color="var(--mantine-color-violet-6)" />}>{current.topicName}</Badge>
-            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconGauge size={14} stroke={1.8} color={current.difficulty === "hard" ? "var(--mantine-color-red-6)" : current.difficulty === "medium" ? "var(--mantine-color-yellow-7)" : "var(--mantine-color-teal-6)"} />}>{current.difficulty}</Badge>
+            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconBooks size={14} color="var(--pm-primary)" />}>{current.subjectName}</Badge>
+            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconHierarchy2 size={14} color="var(--mantine-color-violet-6)" />}>{current.topicName}</Badge>
+            <Badge size="md" variant="transparent" color="gray" className="session-meta-chip" leftSection={<IconGauge size={14} color={current.difficulty === "hard" ? "var(--mantine-color-red-6)" : current.difficulty === "medium" ? "var(--mantine-color-yellow-7)" : "var(--mantine-color-teal-6)"} />}>{current.difficulty}</Badge>
           </Group>
           <Title order={2} fz={{ base: 18, sm: 24 }} className="question-copy">{current.prompt}</Title>
           <QuestionRenderer

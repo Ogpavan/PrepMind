@@ -1,5 +1,5 @@
 import { Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconInbox } from "@tabler/icons-react";
+import { Tray as IconInbox } from "@phosphor-icons/react/ssr";
 import { LinkButton } from "./link-button";
 
 export function EmptyState({ title, description, actionLabel, actionHref }: { title: string; description: string; actionLabel?: string; actionHref?: string }) {

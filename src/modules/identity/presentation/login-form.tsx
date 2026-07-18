@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Alert, Button, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { IconAlertCircle, IconAt, IconLock } from "@tabler/icons-react";
+import { At as IconAt, Lock as IconLock, WarningCircle as IconAlertCircle } from "@phosphor-icons/react/ssr";
 import { loginAction } from "./actions";
 import { loginSchema } from "../schemas/login-schema";
 

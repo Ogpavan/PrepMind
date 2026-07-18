@@ -17,22 +17,22 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconAdjustmentsHorizontal,
-  IconBooks,
-  IconBrain,
-  IconCertificate,
-  IconChartHistogram,
-  IconChevronDown,
-  IconClipboardText,
-  IconDots,
-  IconHierarchy3,
-  IconLayoutDashboard,
-  IconLogout,
-  IconPlus,
-  IconSchool,
-  IconUserCog,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+  Books as IconBooks,
+  Brain as IconBrain,
+  CaretDown as IconChevronDown,
+  Certificate as IconCertificate,
+  ChartBar as IconChartHistogram,
+  ClipboardText as IconClipboardText,
+  DotsThree as IconDots,
+  Gear as IconAdjustmentsHorizontal,
+  House as IconLayoutDashboard,
+  Plus as IconPlus,
+  SignOut as IconLogout,
+  Student as IconSchool,
+  TreeStructure as IconHierarchy3,
+  UserGear as IconUserCog,
+  UsersThree as IconUsersGroup,
+} from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type CSSProperties } from "react";
@@ -117,7 +117,7 @@ export function AppShell({ children, user, variant }: {
                 <UnstyledButton component={Link} href={home} prefetch className="brand-link" aria-label="PrepMind home">
                   <Group gap="sm" wrap="nowrap">
                     <ThemeIcon size={34} radius={4} color="blue">
-                      <IconBrain size={21} stroke={1.8} />
+                      <IconBrain size={21} />
                     </ThemeIcon>
                     <Text className="brand-wordmark">PrepMind</Text>
                   </Group>
@@ -144,7 +144,7 @@ export function AppShell({ children, user, variant }: {
                           <Text fz="sm" fw={600} lh={1.25}>{user.name}</Text>
                           <Text fz={11} c="dimmed" tt="uppercase" fw={600} lts={0.35}>{user.role.replace("_", " ")}</Text>
                         </Box>
-                        <IconChevronDown size={15} stroke={1.8} />
+                        <IconChevronDown size={15} />
                       </Group>
                     </UnstyledButton>
                   </Menu.Target>
@@ -176,7 +176,7 @@ export function AppShell({ children, user, variant }: {
                   data-haptic="selection"
                   aria-current={isActive(href) ? "page" : undefined}
                 >
-                  <Icon size={17} stroke={1.7} />
+                  <Icon size={17} />
                   <span>{label}</span>
                 </UnstyledButton>
               ))}
@@ -206,7 +206,7 @@ export function AppShell({ children, user, variant }: {
               data-haptic="selection"
               aria-current={isActive(href) ? "page" : undefined}
             >
-              <span className="mobile-nav-icon"><Icon size={21} stroke={1.75} /></span>
+              <span className="mobile-nav-icon"><Icon size={21} /></span>
               <span>{label}</span>
             </UnstyledButton>
           ))}
@@ -217,7 +217,7 @@ export function AppShell({ children, user, variant }: {
               className={`mobile-bottom-nav-item${moreLinks.some((item) => isActive(item.href)) ? " mobile-bottom-nav-item-active" : ""}`}
               aria-label="More navigation"
             >
-              <span className="mobile-nav-icon"><IconDots size={22} stroke={1.75} /></span>
+              <span className="mobile-nav-icon"><IconDots size={22} /></span>
               <span>More</span>
             </UnstyledButton>
           )}
@@ -236,7 +236,7 @@ export function AppShell({ children, user, variant }: {
               className={`mobile-sheet-link${isActive(href) ? " mobile-sheet-link-active" : ""}`}
               aria-current={isActive(href) ? "page" : undefined}
             >
-              <ThemeIcon size={36} radius={4} variant="light"><Icon size={19} stroke={1.7} /></ThemeIcon>
+              <ThemeIcon size={36} radius={4} variant="light"><Icon size={19} /></ThemeIcon>
               <span>{label}</span>
             </UnstyledButton>
           ))}

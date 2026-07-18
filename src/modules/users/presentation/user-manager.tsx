@@ -6,7 +6,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { notifications } from "@mantine/notifications";
-import { IconDots, IconEdit, IconPlus } from "@tabler/icons-react";
+import { DotsThree as IconDots, PencilSimple as IconEdit, Plus as IconPlus } from "@phosphor-icons/react/ssr";
 import type { UserListItem } from "../infrastructure/user-repository";
 import { userSchema } from "../schemas/user-schema";
 import { saveUserAction } from "./actions";

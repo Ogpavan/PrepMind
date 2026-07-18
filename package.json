@@ -24,7 +24,7 @@
     "@mantine/form": "latest",
     "@mantine/hooks": "latest",
     "@mantine/notifications": "latest",
-    "@tabler/icons-react": "latest",
+    "@phosphor-icons/react": "^2.1.10",
     "bcryptjs": "latest",
     "dotenv": "latest",
     "drizzle-orm": "latest",

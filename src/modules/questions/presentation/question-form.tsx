@@ -5,7 +5,7 @@ import { Alert, Button, Checkbox, Divider, Grid, Group, NumberInput, Paper, Sele
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconPlus, IconTrash } from "@tabler/icons-react";
+import { Plus as IconPlus, Trash as IconTrash, WarningCircle as IconAlertCircle } from "@phosphor-icons/react/ssr";
 import { useRouter } from "next/navigation";
 import type { Exam, Subject, Topic } from "@/infrastructure/database/schema";
 import { startNavigationProgress } from "@/shared/ui/navigation-progress";

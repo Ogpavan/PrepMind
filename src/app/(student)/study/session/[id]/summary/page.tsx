@@ -1,5 +1,5 @@
 import { Group } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons-react";
+import { Play as IconPlayerPlay } from "@phosphor-icons/react/ssr";
 import { requireUser } from "@/modules/identity/application/authorization";
 import { summaryService } from "@/modules/attempts/application/summary-service";
 import { SessionSummary } from "@/modules/attempts/presentation/session-summary";

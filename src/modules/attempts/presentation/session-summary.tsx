@@ -14,15 +14,15 @@ import {
   Title,
 } from "@mantine/core";
 import {
-  IconCalendar,
-  IconCircleCheck,
-  IconCircleX,
-  IconClipboardList,
-  IconClockHour4,
-  IconPlayerSkipForward,
-  IconTargetArrow,
-  IconTrophy,
-} from "@tabler/icons-react";
+  CalendarBlank as IconCalendar,
+  CheckCircle as IconCircleCheck,
+  ClipboardText as IconClipboardList,
+  Clock as IconClockHour4,
+  SkipForward as IconPlayerSkipForward,
+  Target as IconTargetArrow,
+  Trophy as IconTrophy,
+  XCircle as IconCircleX,
+} from "@phosphor-icons/react/ssr";
 import { StatCard } from "@/shared/ui/stat-card";
 import { formatDuration, formatPercent } from "@/shared/utils/text";
 import type { SessionSummaryData } from "../application/summary-service";
@@ -104,7 +104,7 @@ export function SessionSummary({ summary }: { summary: Summary }) {
           <Stack gap={7} style={{ minWidth: 0, flex: 1 }}>
             <Group gap="xs" wrap="nowrap">
               <ThemeIcon color={scoreColor} variant="light" size={30} radius="xl">
-                <IconTrophy size={17} stroke={1.8} />
+                <IconTrophy size={17} />
               </ThemeIcon>
               <Title order={2} fz={{ base: 18, sm: 22 }} lineClamp={1}>{performanceMessage(summary.accuracy)}</Title>
             </Group>

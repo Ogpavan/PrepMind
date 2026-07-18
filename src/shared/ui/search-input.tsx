@@ -2,7 +2,7 @@
 
 import { TextInput } from "@mantine/core";
 import { useDebouncedCallback } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
+import { MagnifyingGlass as IconSearch } from "@phosphor-icons/react/ssr";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { startNavigationProgress } from "@/shared/ui/navigation-progress";
 

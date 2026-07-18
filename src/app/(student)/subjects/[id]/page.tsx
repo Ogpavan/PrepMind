@@ -1,5 +1,5 @@
 import { Badge, Grid, GridCol, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons-react";
+import { Play as IconPlayerPlay } from "@phosphor-icons/react/ssr";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/modules/identity/application/authorization";
 import { subjectService } from "@/modules/subjects/application/subject-service";

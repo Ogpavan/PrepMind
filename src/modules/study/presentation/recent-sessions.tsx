@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge, Box, Group, Paper, Progress, Stack, Table, Text, Title } from "@mantine/core";
-import { IconCalendar, IconChevronRight } from "@tabler/icons-react";
+import { Badge, Box, Group, Paper, Progress, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { BookOpenText, CalendarBlank as IconCalendar, CaretRight as IconChevronRight } from "@phosphor-icons/react/ssr";
 import { LinkButton } from "@/shared/ui/link-button";
 
 type RecentSession = {
@@ -20,27 +20,28 @@ const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", { dateStyle
 
 export function RecentSessions({ sessions }: { sessions: RecentSession[] }) {
   return (
-    <Paper className="tabler-card" p={{ base: "md", sm: "lg" }}>
-      <Group justify="space-between" mb="md"><Title order={3} fz="md">Recent sessions</Title></Group>
+    <Paper className="tabler-card recent-sessions-card" p={{ base: "md", sm: "lg" }}>
+      <Group justify="space-between" mb="md"><div><Title order={2}>Recent sessions</Title><Text fz="sm" c="dimmed" mt={3}>Continue where you left off or review completed work</Text></div></Group>
       {sessions.length === 0 ? <Text c="dimmed">No study sessions yet.</Text> : <>
-        <Stack gap={0} hiddenFrom="sm">
+        <Stack gap={0} className="recent-session-list">
           {sessions.map((session) => {
             const progress = session.totalQuestions ? session.attempted / session.totalQuestions * 100 : 0;
             return (
-              <Box key={session.id} className="mobile-session-row session-status-row" data-status={session.status} py="sm">
-                <Group justify="space-between" align="flex-start" wrap="nowrap">
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <Text fw={600} lineClamp={1}>{session.examName}</Text>
-                    <Group gap={5} mt={3} wrap="nowrap">
+              <Box key={session.id} className="recent-session-item session-status-row" data-status={session.status} py="md">
+                <Group align="center" wrap="nowrap" gap="md">
+                  <ThemeIcon className="recent-session-icon" size={38} radius={10} variant="light" color={statusColor(session.status)}><BookOpenText size={20} /></ThemeIcon>
+                  <div className="recent-session-main">
+                    <Text fw={700} lineClamp={1}>{session.examName}</Text>
+                    <Group gap={5} mt={4} wrap="nowrap">
                       <IconCalendar size={13} color="var(--pm-muted)" />
                       <Text fz="xs" c="dimmed">{formatDate(session.createdAt)}</Text>
                     </Group>
                   </div>
+                  <Box className="recent-session-progress" visibleFrom="sm">
+                    <Group justify="space-between" mb={6}><Text fz="xs" c="dimmed">Progress</Text><Text fz="xs" fw={700}>{session.attempted}/{session.totalQuestions}</Text></Group>
+                    <Progress value={progress} color={statusColor(session.status)} size={6} radius="xl" />
+                  </Box>
                   <Badge variant="light" color={statusColor(session.status)}>{session.status.replace("_", " ")}</Badge>
-                </Group>
-                <Group gap="sm" mt="sm" wrap="nowrap">
-                  <Progress value={progress} color={statusColor(session.status)} size={6} style={{ flex: 1 }} />
-                  <Text fz="xs" fw={600}>{session.attempted}/{session.totalQuestions}</Text>
                   <LinkButton
                     size="compact-xs"
                     variant="subtle"
@@ -51,23 +52,14 @@ export function RecentSessions({ sessions }: { sessions: RecentSession[] }) {
                     {session.status === "completed" ? "Review" : "Resume"}
                   </LinkButton>
                 </Group>
+                <Group gap="sm" mt="sm" wrap="nowrap" hiddenFrom="sm">
+                  <Progress value={progress} color={statusColor(session.status)} size={6} style={{ flex: 1 }} />
+                  <Text fz="xs" fw={600}>{session.attempted}/{session.totalQuestions}</Text>
+                </Group>
               </Box>
             );
           })}
         </Stack>
-
-        <Box visibleFrom="sm" className="data-table-wrap">
-          <Table verticalSpacing="sm">
-            <Table.Thead><Table.Tr><Table.Th>Exam</Table.Th><Table.Th>Progress</Table.Th><Table.Th>Status</Table.Th><Table.Th>Date</Table.Th><Table.Th /></Table.Tr></Table.Thead>
-            <Table.Tbody>{sessions.map((session) => <Table.Tr key={session.id} className="session-status-row" data-status={session.status}>
-              <Table.Td>{session.examName}</Table.Td>
-              <Table.Td>{session.attempted}/{session.totalQuestions}</Table.Td>
-              <Table.Td><Badge variant="light" color={statusColor(session.status)}>{session.status.replace("_", " ")}</Badge></Table.Td>
-              <Table.Td>{formatDate(session.createdAt)}</Table.Td>
-              <Table.Td><LinkButton size="xs" variant="subtle" href={sessionHref(session)} disabled={session.status === "abandoned"}>{session.status === "completed" ? "View summary" : "Resume"}</LinkButton></Table.Td>
-            </Table.Tr>)}</Table.Tbody>
-          </Table>
-        </Box>
       </>}
     </Paper>
   );
