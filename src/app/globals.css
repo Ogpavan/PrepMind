@@ -479,6 +479,34 @@ a,
   .mantine-Input-input { min-height: 42px; border-radius: 8px; font-size: 16px; }
   .mantine-Select-option { min-height: 44px; }
   .mantine-Grid-col .tabler-card .mantine-ThemeIcon-root { width: 34px; min-width: 34px; height: 34px; }
+  .session-runner {
+    height: calc(100vh - 188px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 188px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    min-height: 0;
+    gap: 8px !important;
+    overflow: hidden;
+  }
+  .session-overview-card,
+  .session-navigation-row,
+  .session-finish-button,
+  .session-answer-count { flex: 0 0 auto; }
+  .session-question-panel {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+  }
+  .session-question-content { gap: 12px !important; }
+  .session-question-content .question-copy { line-height: 1.4; }
+  .session-answer-list { gap: 6px !important; }
+  .session-meta-row {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .session-meta-row::-webkit-scrollbar { display: none; }
+  .session-meta-chip { min-height: 24px; flex: 0 0 auto; padding-inline: 7px; }
   .session-summary-hero .mantine-RingProgress-root { flex: 0 0 auto; }
   .summary-review .mantine-Accordion-control { padding-inline: 10px; }
   .summary-review .mantine-Accordion-content { padding-inline: 10px; }
