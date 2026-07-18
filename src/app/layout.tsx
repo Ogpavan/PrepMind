@@ -9,6 +9,7 @@ import { AppProviders } from "@/shared/ui/app-providers";
 import { ButtonHaptics } from "@/shared/ui/button-haptics";
 import { ConnectivityStatus } from "@/shared/pwa/connectivity-status";
 import { RegisterServiceWorker } from "@/shared/pwa/register-service-worker";
+import { NavigationProgress } from "@/shared/ui/navigation-progress";
 
 export const metadata: Metadata = {
   title: { default: "PrepMind", template: "%s · PrepMind" },
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head><ColorSchemeScript defaultColorScheme="light" /></head>
       <body>
         <AppProviders>
+          <NavigationProgress />
           <ButtonHaptics />
           <ConnectivityStatus />
           {children}

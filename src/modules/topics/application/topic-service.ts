@@ -22,6 +22,28 @@ async function validateParent(input: TopicInput) {
 function mapValues(input: TopicInput, actorId: string) { return { subjectId: input.subjectId, parentTopicId: input.parentTopicId, name: cleanText(input.name), description: cleanText(input.description), displayOrder: input.displayOrder, isActive: input.isActive, updatedBy: actorId, updatedAt: new Date() }; }
 export const topicService = {
   list: (input?: PaginationInput & { examId?: string; subjectId?: string }) => topicRepository.list(input), listBySubject: (subjectId: string, activeOnly = true) => topicRepository.listBySubject(subjectId, activeOnly), listReference: () => topicRepository.listReference(),
-  async save(raw: unknown, actorId: string) { const parsed = topicSchema.safeParse(raw); if (!parsed.success) throw new ApplicationError("VALIDATION", "Check the highlighted fields.", parsed.error.flatten().fieldErrors); await validateParent(parsed.data); if (parsed.data.id) { const item = await topicRepository.update(parsed.data.id, mapValues(parsed.data, actorId)); if (!item) throw new ApplicationError("NOT_FOUND", "Topic not found."); return item; } return topicRepository.create({ ...mapValues(parsed.data, actorId), createdBy: actorId }); },
+  async save(raw: unknown, actorId: string) {
+    const parsed = topicSchema.safeParse(raw);
+    if (!parsed.success) throw new ApplicationError("VALIDATION", "Check the highlighted fields.", parsed.error.flatten().fieldErrors);
+
+    const sanitized = topicSchema.safeParse({
+      ...parsed.data,
+      name: cleanText(parsed.data.name),
+      description: cleanText(parsed.data.description),
+    });
+    if (!sanitized.success) throw new ApplicationError("VALIDATION", "Check the highlighted fields.", sanitized.error.flatten().fieldErrors);
+
+    await validateParent(sanitized.data);
+    if (await topicRepository.findDuplicate(sanitized.data.subjectId, sanitized.data.parentTopicId, sanitized.data.name, sanitized.data.id)) {
+      throw new ApplicationError("CONFLICT", "A topic with this name already exists at this level.", { name: ["Use a different topic name"] });
+    }
+
+    if (sanitized.data.id) {
+      const item = await topicRepository.update(sanitized.data.id, mapValues(sanitized.data, actorId));
+      if (!item) throw new ApplicationError("NOT_FOUND", "Topic not found.");
+      return item;
+    }
+    return topicRepository.create({ ...mapValues(sanitized.data, actorId), createdBy: actorId });
+  },
   async toggle(id: string, active: boolean, actorId: string) { const item = await topicRepository.update(id, { isActive: active, updatedBy: actorId, updatedAt: new Date() }); if (!item) throw new ApplicationError("NOT_FOUND", "Topic not found."); return item; },
 };

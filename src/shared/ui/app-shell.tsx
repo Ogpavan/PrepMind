@@ -37,6 +37,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type CSSProperties } from "react";
 import { logoutAction } from "@/modules/identity/presentation/actions";
+import { RoutePreloader } from "@/shared/ui/route-preloader";
 
 const adminLinks = [
   { href: "/admin/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
@@ -56,6 +57,9 @@ const studentLinks = [
   { href: "/settings", label: "Settings", icon: IconUserCog },
 ];
 
+const adminPreloadRoutes = [...adminLinks.map((item) => item.href), "/admin/questions/new"];
+const studentPreloadRoutes = studentLinks.map((item) => item.href);
+
 export function AppShell({ children, user, variant }: {
   children: React.ReactNode;
   user: { name?: string | null; email?: string | null; role: string };
@@ -65,6 +69,7 @@ export function AppShell({ children, user, variant }: {
   const [pendingNavigation, setPendingNavigation] = useState<{ from: string; to: string } | null>(null);
   const pathname = usePathname();
   const links = variant === "admin" ? adminLinks : studentLinks;
+  const preloadRoutes = variant === "admin" ? adminPreloadRoutes : studentPreloadRoutes;
   const mobileLinks = variant === "admin"
     ? adminLinks.filter((item) => ["/admin/dashboard", "/admin/questions", "/admin/exams", "/admin/users"].includes(item.href))
     : studentLinks;
@@ -101,13 +106,15 @@ export function AppShell({ children, user, variant }: {
   }, [pendingNavigation]);
 
   return (
-    <MantineAppShell header={{ height: { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
+    <>
+      <RoutePreloader routes={preloadRoutes} />
+      <MantineAppShell header={{ height: { base: "calc(58px + env(safe-area-inset-top, 0px))", sm: 106 } }} padding={0}>
       <MantineAppShell.Header className="app-header">
         <Box className="app-header-primary">
           <Container size={1320} px={{ base: "md", sm: "lg" }} h="100%">
             <Group h="100%" justify="space-between" wrap="nowrap">
               <Group gap="sm" wrap="nowrap">
-                <UnstyledButton component={Link} href={home} className="brand-link" aria-label="PrepMind home">
+                <UnstyledButton component={Link} href={home} prefetch className="brand-link" aria-label="PrepMind home">
                   <Group gap="sm" wrap="nowrap">
                     <ThemeIcon size={34} radius={4} color="blue">
                       <IconBrain size={21} stroke={1.8} />
@@ -121,6 +128,7 @@ export function AppShell({ children, user, variant }: {
                 <Button
                   component={Link}
                   href={quickAction.href}
+                  prefetch
                   data-haptic="medium"
                   leftSection={<IconPlus size={16} />}
                   visibleFrom="md"
@@ -144,7 +152,7 @@ export function AppShell({ children, user, variant }: {
                     <Menu.Label>Signed in as</Menu.Label>
                     <Text px="sm" pb="xs" fz="sm" fw={500} lineClamp={1}>{user.email}</Text>
                     <Divider />
-                    <Menu.Item component={Link} href={variant === "admin" ? "/admin/settings" : "/settings"} leftSection={<IconUserCog size={16} />}>Account settings</Menu.Item>
+                    <Menu.Item component={Link} href={variant === "admin" ? "/admin/settings" : "/settings"} prefetch leftSection={<IconUserCog size={16} />}>Account settings</Menu.Item>
                     <form action={logoutAction}>
                       <Menu.Item component="button" type="submit" data-haptic="warning" leftSection={<IconLogout size={16} />} color="red" w="100%">Sign out</Menu.Item>
                     </form>
@@ -162,6 +170,7 @@ export function AppShell({ children, user, variant }: {
                 <UnstyledButton
                   component={Link}
                   href={href}
+                  prefetch
                   key={href}
                   className={`top-nav-link${isActive(href) ? " top-nav-link-active" : ""}`}
                   data-haptic="selection"
@@ -215,7 +224,7 @@ export function AppShell({ children, user, variant }: {
         </div>
       </Box>
 
-      <Drawer opened={moreOpened} onClose={more.close} position="bottom" size={360} zIndex={400} title="More" hiddenFrom="sm" classNames={{ content: "mobile-more-sheet", header: "mobile-more-sheet-header" }}>
+      <Drawer opened={moreOpened} onClose={more.close} position="bottom" size={360} zIndex={400} title="More" hiddenFrom="sm" removeScrollProps={{ removeScrollBar: false }} classNames={{ content: "mobile-more-sheet", header: "mobile-more-sheet-header" }}>
         <Stack gap={4} pb="md">
           {moreLinks.map(({ href, label, icon: Icon }) => (
             <UnstyledButton
@@ -231,11 +240,12 @@ export function AppShell({ children, user, variant }: {
               <span>{label}</span>
             </UnstyledButton>
           ))}
-          <Button component={Link} href={quickAction.href} data-haptic="medium" onClick={more.close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
+          <Button component={Link} href={quickAction.href} prefetch data-haptic="medium" onClick={more.close} leftSection={<IconPlus size={16} />} fullWidth mt="sm">
             {quickAction.label}
           </Button>
         </Stack>
       </Drawer>
-    </MantineAppShell>
+      </MantineAppShell>
+    </>
   );
 }

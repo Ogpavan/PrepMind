@@ -1,4 +1,4 @@
-import { and, asc, count, eq, ilike } from "drizzle-orm";
+import { and, asc, count, eq, ilike, isNull, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "@/infrastructure/database/client";
 import { exams, subjects, topics } from "@/infrastructure/database/schema";
@@ -18,6 +18,19 @@ export const topicRepository = {
   async listBySubject(subjectId: string, activeOnly = true) { return db.select().from(topics).where(activeOnly ? and(eq(topics.subjectId, subjectId), eq(topics.isActive, true)) : eq(topics.subjectId, subjectId)).orderBy(asc(topics.displayOrder), asc(topics.name)); },
   async listReference() { return db.select({ id: topics.id, name: topics.name, subjectId: topics.subjectId, parentTopicId: topics.parentTopicId }).from(topics).orderBy(asc(topics.name)); },
   async findById(id: string) { const [item] = await db.select().from(topics).where(eq(topics.id, id)).limit(1); return item ?? null; },
+  async findDuplicate(subjectId: string, parentTopicId: string | null, name: string, excludeId?: string) {
+    const [item] = await db
+      .select({ id: topics.id })
+      .from(topics)
+      .where(and(
+        eq(topics.subjectId, subjectId),
+        parentTopicId ? eq(topics.parentTopicId, parentTopicId) : isNull(topics.parentTopicId),
+        sql`lower(${topics.name}) = lower(${name})`,
+        excludeId ? ne(topics.id, excludeId) : undefined,
+      ))
+      .limit(1);
+    return item ?? null;
+  },
   async create(values: typeof topics.$inferInsert) { const [item] = await db.insert(topics).values(values).returning(); return item; },
   async update(id: string, values: Partial<typeof topics.$inferInsert>) { const [item] = await db.update(topics).set(values).where(eq(topics.id, id)).returning(); return item ?? null; },
 };

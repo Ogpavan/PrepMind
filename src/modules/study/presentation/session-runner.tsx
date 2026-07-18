@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { IconArrowLeft, IconArrowRight, IconBooks, IconCheck, IconClock, IconFlag, IconGauge, IconHierarchy2, IconPlayerSkipForward, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { QuestionRenderer } from "@/shared/ui/question-renderer";
+import { startNavigationProgress } from "@/shared/ui/navigation-progress";
 import { calculateCorrectness } from "@/modules/questions/domain/correctness";
 import { triggerHaptic } from "@/shared/utils/haptics";
 import { formatDuration } from "@/shared/utils/text";
@@ -48,6 +49,7 @@ export function SessionRunner({ initialSession }: { initialSession: LearnerSessi
       if (result.ok) {
         triggerHaptic("success");
         const summaryUrl = `/study/session/${initialSession.id}/summary`;
+        startNavigationProgress();
         if (timedOut) router.replace(summaryUrl);
         else router.push(summaryUrl);
       } else {

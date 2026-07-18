@@ -28,6 +28,8 @@
     "bcryptjs": "latest",
     "dotenv": "latest",
     "drizzle-orm": "latest",
+    "exceljs": "^4.4.0",
+    "jszip": "3.10.1",
     "mantine-form-zod-resolver": "latest",
     "next": "16.2.10",
     "next-auth": "beta",
