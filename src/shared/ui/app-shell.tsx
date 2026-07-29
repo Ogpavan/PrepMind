@@ -24,6 +24,7 @@ import {
   ChartBar as IconChartHistogram,
   ClipboardText as IconClipboardText,
   DotsThree as IconDots,
+  FileText as IconFileText,
   Gear as IconAdjustmentsHorizontal,
   House as IconLayoutDashboard,
   Plus as IconPlus,
@@ -45,6 +46,7 @@ const adminLinks = [
   { href: "/admin/subjects", label: "Subjects", icon: IconBooks },
   { href: "/admin/topics", label: "Topics", icon: IconHierarchy3 },
   { href: "/admin/questions", label: "Questions", icon: IconClipboardText },
+  { href: "/admin/logs", label: "Logs", icon: IconFileText },
   { href: "/admin/users", label: "Users", icon: IconUsersGroup },
   { href: "/admin/settings", label: "Settings", icon: IconAdjustmentsHorizontal },
 ];
@@ -74,7 +76,7 @@ export function AppShell({ children, user, variant }: {
     ? adminLinks.filter((item) => ["/admin/dashboard", "/admin/questions", "/admin/exams", "/admin/users"].includes(item.href))
     : [studentLinks[0], studentLinks[2], studentLinks[1], studentLinks[3], studentLinks[4]];
   const moreLinks = variant === "admin"
-    ? adminLinks.filter((item) => ["/admin/subjects", "/admin/topics", "/admin/settings"].includes(item.href))
+    ? adminLinks.filter((item) => ["/admin/subjects", "/admin/topics", "/admin/logs", "/admin/settings"].includes(item.href))
     : [];
   const home = variant === "admin" ? "/admin/dashboard" : "/dashboard";
   const focusMode = variant === "student" && /^\/study\/session\/[^/]+$/.test(pathname);

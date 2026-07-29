@@ -1,9 +1,11 @@
 import { subjectRepository } from "@/modules/subjects/infrastructure/subject-repository";
+import { examRepository } from "@/modules/exams/infrastructure/exam-repository";
 import { ApplicationError } from "@/shared/errors/application-error";
 import type { PaginationInput } from "@/shared/types/pagination";
 import { cleanText } from "@/shared/utils/text";
 import { topicRepository } from "../infrastructure/topic-repository";
 import { topicSchema, type TopicInput } from "../schemas/topic-schema";
+import { z } from "zod";
 
 async function validateParent(input: TopicInput) {
   if (!await subjectRepository.findById(input.subjectId)) throw new ApplicationError("VALIDATION", "Selected subject does not exist.", { subjectId: ["Select a valid subject"] });
@@ -46,4 +48,11 @@ export const topicService = {
     return topicRepository.create({ ...mapValues(sanitized.data, actorId), createdBy: actorId });
   },
   async toggle(id: string, active: boolean, actorId: string) { const item = await topicRepository.update(id, { isActive: active, updatedBy: actorId, updatedAt: new Date() }); if (!item) throw new ApplicationError("NOT_FOUND", "Topic not found."); return item; },
+  async remove(id: string) {
+    const parsed = z.uuid().safeParse(id);
+    if (!parsed.success) throw new ApplicationError("VALIDATION", "Select a valid topic to delete.");
+    const summary = await examRepository.removeTopicCascade(parsed.data);
+    if (!summary) throw new ApplicationError("NOT_FOUND", "Topic not found.");
+    return summary;
+  },
 };

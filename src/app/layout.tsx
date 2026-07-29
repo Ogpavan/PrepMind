@@ -3,7 +3,6 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/charts/styles.css";
 import "./globals.css";
-import { ColorSchemeScript } from "@mantine/core";
 import { AppProviders } from "@/shared/ui/app-providers";
 import { ButtonHaptics } from "@/shared/ui/button-haptics";
 import { ConnectivityStatus } from "@/shared/pwa/connectivity-status";
@@ -39,7 +38,6 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><ColorSchemeScript defaultColorScheme="light" /></head>
       <body>
         <AppProviders>
           <NavigationProgress />

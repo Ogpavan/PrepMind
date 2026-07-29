@@ -3,6 +3,7 @@ import { examSchema, type ExamInput } from "../schemas/exam-schema";
 import { ApplicationError } from "@/shared/errors/application-error";
 import { cleanText } from "@/shared/utils/text";
 import type { PaginationInput } from "@/shared/types/pagination";
+import { z } from "zod";
 
 function mapValues(input: ExamInput, actorId: string) { return { name: cleanText(input.name), code: input.code.trim().toUpperCase(), description: cleanText(input.description), totalMarks: input.totalMarks, targetScore: input.targetScore, durationMinutes: input.durationMinutes, isActive: input.isActive, updatedBy: actorId, updatedAt: new Date() }; }
 
@@ -16,4 +17,11 @@ export const examService = {
     catch (error) { if (typeof error === "object" && error && "code" in error && error.code === "23505") throw new ApplicationError("CONFLICT", "An exam with this code already exists."); throw error; }
   },
   async toggle(id: string, active: boolean, actorId: string) { const item = await examRepository.update(id, { isActive: active, updatedBy: actorId, updatedAt: new Date() }); if (!item) throw new ApplicationError("NOT_FOUND", "Exam not found."); return item; },
+  async remove(id: string) {
+    const parsed = z.uuid().safeParse(id);
+    if (!parsed.success) throw new ApplicationError("VALIDATION", "Select a valid exam to delete.");
+    const summary = await examRepository.removeCascade(parsed.data);
+    if (!summary) throw new ApplicationError("NOT_FOUND", "Exam not found.");
+    return summary;
+  },
 };

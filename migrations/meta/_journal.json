@@ -8,6 +8,13 @@
       "when": 1784267104193,
       "tag": "0000_bright_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785307950000,
+      "tag": "0001_generation_logs",
+      "breakpoints": true
     }
   ]
 }

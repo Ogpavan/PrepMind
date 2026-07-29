@@ -19,6 +19,7 @@ export const userRoleEnum = pgEnum("user_role", ["SUPER_ADMIN", "ADMIN", "STUDEN
 export const questionTypeEnum = pgEnum("question_type", ["single_choice", "multiple_choice", "true_false"]);
 export const difficultyEnum = pgEnum("difficulty", ["easy", "medium", "hard"]);
 export const sessionStatusEnum = pgEnum("session_status", ["created", "in_progress", "completed", "abandoned"]);
+export const generationStatusEnum = pgEnum("generation_status", ["queued", "running", "completed", "failed"]);
 
 const auditTimestamps = () => ({
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -238,6 +239,30 @@ export const appSettings = pgTable("app_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const generationLogs = pgTable(
+  "generation_logs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    examId: uuid("exam_id").references(() => exams.id, { onDelete: "set null" }),
+    subjectId: uuid("subject_id").references(() => subjects.id, { onDelete: "set null" }),
+    topicId: uuid("topic_id").references(() => topics.id, { onDelete: "set null" }),
+    model: varchar("model", { length: 120 }).notNull(),
+    status: generationStatusEnum("status").default("queued").notNull(),
+    requestedQuestions: integer("requested_questions").default(0).notNull(),
+    generatedQuestions: integer("generated_questions").default(0).notNull(),
+    insertedQuestions: integer("inserted_questions").default(0).notNull(),
+    failedQuestions: integer("failed_questions").default(0).notNull(),
+    message: text("message").default("").notNull(),
+    details: jsonb("details").$type<Array<{ at: string; message: string }>>().default(sql`'[]'::jsonb`).notNull(),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("generation_logs_created_idx").on(table.createdAt), index("generation_logs_status_idx").on(table.status)],
+);
+
 export const examsRelations = relations(exams, ({ many }) => ({ subjects: many(subjects), questions: many(questions) }));
 export const subjectsRelations = relations(subjects, ({ one, many }) => ({ exam: one(exams, { fields: [subjects.examId], references: [exams.id] }), topics: many(topics), questions: many(questions) }));
 export const topicsRelations = relations(topics, ({ one, many }) => ({ subject: one(subjects, { fields: [topics.subjectId], references: [subjects.id] }), parent: one(topics, { fields: [topics.parentTopicId], references: [topics.id], relationName: "topicTree" }), children: many(topics, { relationName: "topicTree" }) }));
@@ -246,6 +271,7 @@ export const questionOptionsRelations = relations(questionOptions, ({ one }) => 
 export const studySessionsRelations = relations(studySessions, ({ one, many }) => ({ user: one(users, { fields: [studySessions.userId], references: [users.id] }), questions: many(studySessionQuestions), attempts: many(attempts) }));
 export const studySessionQuestionsRelations = relations(studySessionQuestions, ({ one }) => ({ session: one(studySessions, { fields: [studySessionQuestions.sessionId], references: [studySessions.id] }), question: one(questions, { fields: [studySessionQuestions.questionId], references: [questions.id] }), attempt: one(attempts) }));
 export const attemptsRelations = relations(attempts, ({ one }) => ({ session: one(studySessions, { fields: [attempts.sessionId], references: [studySessions.id] }), sessionQuestion: one(studySessionQuestions, { fields: [attempts.sessionQuestionId], references: [studySessionQuestions.id] }), question: one(questions, { fields: [attempts.questionId], references: [questions.id] }), user: one(users, { fields: [attempts.userId], references: [users.id] }) }));
+export const generationLogsRelations = relations(generationLogs, ({ one }) => ({ exam: one(exams, { fields: [generationLogs.examId], references: [exams.id] }), subject: one(subjects, { fields: [generationLogs.subjectId], references: [subjects.id] }), topic: one(topics, { fields: [generationLogs.topicId], references: [topics.id] }), user: one(users, { fields: [generationLogs.createdBy], references: [users.id] }) }));
 
 export type User = typeof users.$inferSelect;
 export type Exam = typeof exams.$inferSelect;
@@ -254,3 +280,4 @@ export type Topic = typeof topics.$inferSelect;
 export type Question = typeof questions.$inferSelect;
 export type StudySession = typeof studySessions.$inferSelect;
 export type Attempt = typeof attempts.$inferSelect;
+export type GenerationLog = typeof generationLogs.$inferSelect;
